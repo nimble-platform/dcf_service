@@ -1,0 +1,12 @@
+- topic, channel, datachannel, column name cannot have char (.,-/ _#'^)
+
+- every datachannel is better to have always key in field list
+
+- drop and recreation of streams cause -> added dcfs.streams.recreate=false which create only new Streams
+
+#[2018-06-13 10:15:09,349] ERROR Shutdown broker because all log dirs in /tmp/kafka-logs have failed (kafka.log.LogManager);
+ Exception while trying to clean up internal topics for application id:  _confluent-ksql-nimbletransient_373448461372891277_1528878625364.
+ 
+https://github.com/confluentinc/ksql/issues/1326 on 22 May 
+question "IBM MessageHub is currently based on Kafka 0.10.2 whereas KSQL 4.1 is compatible with Kafka 0.11.x. Hence I am trying with KSQL 0.4.x branch." 
+reply "This was actually a bug in the documentation IIRC. All prior KSQL versions including 0.4 only worked with Kafka 0.11 and later. They never worked with 0.10.2."

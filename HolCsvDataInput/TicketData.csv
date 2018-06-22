@@ -1,0 +1,27 @@
+SERVICEAREA,SERVICETYPE,SYMPTOMCODE,SERIALNUMBER,SOCS1REPAIR_CODE,SOCS2COMPONENTCODE,SOCS3DEFECT_CODE,NR_INTERVENTION
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151621000539,Part Replaced,USER BOARD,Faulty mains voltage,1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151621000539,Part Replaced,USER BOARD,Faulty mains voltage,1
+ITA_030 : DISTRETTO 1,Standard Repair,Oven does not switch on,151621000539,Part Replaced,USER BOARD,Faulty mains voltage,1
+ITA_030 : DISTRETTO 1,Standard Repair,Oven does not switch on,151621000539,Part Replaced,USER BOARD,Faulty mains voltage,1
+ITA_043 : DISTRETTO 2,Standard Repair,Other problem,151638000836,Part Replaced,CONTROL PANEL,Unable to diagnose fault,1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151513007202,Part Replaced,DOOR,"Scratched, dented, sharp edges",1
+ITA_088 : DISTRETTO 7,Complex Repair,Other problem,151634009056,Part Replaced,MAINS LEAD / CORD,Short circuit,1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151643001026,Repaired component,MICROSWITCH,"Loose, off, stripped",1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151509004317,Part Replaced,CONTROL PANEL,Mechanically misaligned,1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151509004317,Part Replaced,CONTROL PANEL,Mechanically misaligned,1
+ITA_017 : DISTRETTO 3,Standard Repair,Other problem,151549002328,Mechanical alignments,DOOR,Mechanically misaligned,1
+ITA_008 : DISTRETTO 8,Standard Repair,Front panel damaged / dented - PREORD -,151610004489,Repaired component,DOOR / LID,Leaking,1
+ITA_092 : DISTRETTO 5,Standard Repair,F2E1 on display,151530008135,Part Replaced,CONTROL PANEL,"Cut, broken, split, torn",1
+ITA_071 : DISTRETTO 6,Standard Repair,Outer glass broken - PREORD - NA,151549005403,Part Replaced,"PANEL, FRONT","Incorrect wired, assembled",1
+ITA_017 : DISTRETTO 3,Standard Repair,Oven does not switch on,151615005397,Mechanical alignments,DOOR,"Incorrect wired, assembled",1
+ITA_043 : DISTRETTO 2,Standard Repair,Too noisy,151624006262,Mechanical alignments,"MOTOR-FAN, CIRCULATION",Vibrating,1
+ITA_088 : DISTRETTO 7,Standard Repair,WH-DOOR on display,151546009737,Functional check,PERFORMANCE COMPLAINT,"Misoperating (component, module)",1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151621000539,Part Replaced,USER BOARD,"Misoperating (component, module)",1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151621000539,Part Replaced,USER BOARD,"Misoperating (component, module)",1
+ITA_030 : DISTRETTO 1,Standard Repair,Oven does not switch on,151621000539,Part Replaced,USER BOARD,"Misoperating (component, module)",1
+ITA_030 : DISTRETTO 1,Standard Repair,Oven does not switch on,151621000539,Part Replaced,USER BOARD,"Misoperating (component, module)",1
+ITA_043 : DISTRETTO 2,Standard Repair,Component is dented / damaged,151613002699,Part Replaced,CONTROL PANEL,Worn out (or general mechanical defect),1
+ITA_009 : DISTRETTO 9,Standard Repair,Other problem,151636007869,Part Replaced,CONTROL PANEL,"Scratched, dented, sharp edges",1
+ITA_006 : DISTRETTO 4,Standard Repair,Other problem,151638000903,Part Replaced,DOOR,"Scratched, dented, sharp edges",1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151509004317,Product exchange proposal,CONTROL PANEL,Mechanically misaligned,1
+ITA_030 : DISTRETTO 1,Standard Repair,Other problem,151509004317,Product exchange proposal,CONTROL PANEL,Mechanically misaligned,1

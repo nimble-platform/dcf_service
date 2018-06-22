@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="com.nimble.dcfs.PERSISTENCE" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <class>com.nimble.dcfs.db.FilteredSubscriptionChannel</class>
+    <class>com.nimble.dcfs.db.DataFormat</class>
+    <class>com.nimble.dcfs.db.GroupConsumer</class>
+    <class>com.nimble.dcfs.db.FilterGroupChannel</class>
+    <class>com.nimble.dcfs.db.Channel</class>
+    <class>com.nimble.dcfs.db.User</class>
+    <class>com.nimble.dcfs.db.DataChannel</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+     <!-- property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/whiDatachannelfilteringservicedb?zeroDateTimeBehavior=convertToNull"/ -->
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/holDatachannelfilteringservicedb?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="nimble"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="nimble"/>
+      <property name="javax.persistence.schema-generation.database.action" value="none"/>
+    </properties>
+  </persistence-unit>
+</persistence>

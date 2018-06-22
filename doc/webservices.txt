@@ -1,0 +1,75 @@
+Interrogazione WS
+-----------------
+
+CONSUMER BASIC
+--------------
+/dcfs/consumer
+
+- /loginConsumer/{login}/{password}/{idProducer}
+http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd/1
+
+- /filterChannel/{login}/{password}/{idProducer}/{streamName}/{filtervalue}
+http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151611006559'
+
+- /listAvaiableDataChannel/{login}/{password}/{idProducer}
+http://localhost:28080/dcfs/consumer/listAvaiableDataChannel/CS/pwd/1
+
+- /dataChannelMetadata/{login}/{password}/{idProducer}/{streamName}
+http://localhost:28080/dcfs/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
+
+
+WHI CONSUMER
+------------
+
+/dcfs/whirpool
+
+- /loginConsumer/{login}/{password}
+http://localhost:28080/dcfs/whirpool/loginConsumer/CS/pwd
+
+- /listAvaiableDataChannel/{login}/{password}
+http://localhost:28080/dcfs/whirpool/listAvaiableDataChannel/CS/pwd
+
+- /productionData/{login}/{password}/{serialnumber}
+http://localhost:28080/dcfs/whirpool/productionData/CS/pwd/151611006559
+
+- /qualityData/{login}/{password}/{serialnumber}
+http://localhost:28080/dcfs/whirpool/qualityData/CS/pwd/151611006559
+
+
+- /buyData/{login}/{password}/{serialnumber}
+http://localhost:28080/dcfs/whirpool/buyData/CS/pwd/151611006559
+
+- /interventData/{login}/{password}/{serialnumber}
+http://localhost:28080/dcfs/whirpool/interventData/CS/pwd/151611006559
+
+- /productData/{login}/{password}/{serialnumber}
+http://localhost:28080/dcfs/whirpool/productData/CS/pwd/151611006559
+
+
+CONSUMER HOL
+--------------
+/dcfs/consumer
+
+- /loginConsumer/{login}/{password}/{idProducer}
+http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd/1
+
+- /filterChannel/{login}/{password}/{idProducer}/{streamName}/{filtervalue}
+http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_PRODUCTDATA/serialnumber='151638000903'
+
+- /listAvaiableDataChannel/{login}/{password}/{idProducer}
+http://localhost:28080/dcfs/consumer/listAvaiableDataChannel/CS/pwd/1
+
+- /dataChannelMetadata/{login}/{password}/{idProducer}/{streamName}
+http://localhost:28080/dcfs/consumer/dataChannelMetadata/CS/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_DC_PRODUCTDATA
+
+- try to read from a DataChannel whitout permission
+http://localhost:28080/dcfs/consumer/filterChannel/FST/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_DC_QUALITYDATA/serialnumber='151638000903'
+
+
+Admin
+-----
+#restart DCFS (recreate topics, recreate streams, run customInizializer) - usefull if anything has changed in db
+http://localhost:28080/dcfs/admin/restartSystem/nimble/nimble
+
+/admin/restartCustomInitializer/{user}/{password}
+http://localhost:28080/dcfs/admin/startCustomInitializer/nimble/nimble

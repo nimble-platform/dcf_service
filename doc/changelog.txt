@@ -1,0 +1,19 @@
+21.6.2018 rel 0.3
+
+created snapshot of starting demo scenario in order to relase to Nimble Github
+
+
+13.6.2018 rel 0.2
+
+data consumer and first version of filtering rest service
+admin services ready: topic creation and apache Stream created
+
+
+5.6.2018 rel 0.1
+
+first schema db created
+entity object and finder
+ksql gateway ready
+data sample in csv
+custom data producer running
+
