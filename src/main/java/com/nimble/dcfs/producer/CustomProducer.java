@@ -13,26 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package com.nimble.dcfs.db;
+ 
+package com.nimble.dcfs.producer;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import com.nimble.dcfs.producer.DcfsProducer;
 
 /**
- *
+ * Interface to be implemented in order to create a valid Customized Data Producer
  * @author a.musumeci
  */
-public class DcfsEntityManagerFactory {
+public interface CustomProducer {
 
-    static EntityManager em = null;
+    /**
+     *
+     * @return
+     */
+    public String getLoginProducer();
 
-    public static EntityManager createEntityManager() {
-            if (em == null) {
-                EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.nimble.dcfs.PERSISTENCE");
-                em = emf.createEntityManager();
-            }
-            return em;
-    }
-   
+    /**
+     *
+     * @return
+     */
+    public String getPasswordProducer();
+
+    /**
+     *
+     * @param producer
+     * @return
+     */
+    public boolean afterStartTopic(DcfsProducer producer);
+    
+    
 }

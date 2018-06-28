@@ -13,26 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package com.nimble.dcfs.db;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+package com.nimble.dcfs.datachannel;
 
 /**
  *
  * @author a.musumeci
  */
-public class DcfsEntityManagerFactory {
+public class MetadataRow {
+    String field, value;
 
-    static EntityManager em = null;
-
-    public static EntityManager createEntityManager() {
-            if (em == null) {
-                EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.nimble.dcfs.PERSISTENCE");
-                em = emf.createEntityManager();
-            }
-            return em;
+    public MetadataRow(String field, String value) {
+        this.field = field;
+        this.value = value;
     }
-   
+    
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public String toString() {
+        return  field +" "+ value;
+    }
 }

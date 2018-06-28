@@ -1,3 +1,12 @@
+28.6 rel 0.4
+
+Producer is able now to configure a subscription of an user without group directly to a datachannel
+
+getMetadata working also over Group Filtering and Subscription Filtering rules; first implementation
+added example for ws in /demonimble in order to show how to extends CustomRestService to have a customized consumers' service for a producer
+StreamManager added +getFieldList +getFilterList
+Light refactoring in order to reduce coupling, permit better resource closing.
+
 21.6.2018 rel 0.3
 
 created snapshot of starting demo scenario in order to relase to Nimble Github

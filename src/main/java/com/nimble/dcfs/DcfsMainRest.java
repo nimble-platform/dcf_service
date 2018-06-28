@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 a.musumeci.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nimble.dcfs;
 
 
@@ -13,63 +29,50 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
-import com.nimble.dcfs.datachannel.AclManager;
 import com.nimble.dcfs.util.PropertiesLoader;
 import java.util.Properties;
 import javax.ws.rs.PathParam;
 
+/**
+ * public web root of the service
+ * @author a.musumeci
+ */
 @ApplicationPath("/")
 @Path("/")
 @Singleton
 public class DcfsMainRest extends Application implements ServletContextListener {
     private final Logger logger = Logger.getLogger(DcfsMainRest.class);
-    static DcfsInitializer dcfsInitializer = new DcfsInitializer();
     private static Properties props = PropertiesLoader.loadProperties();
 
-    static {
-        dcfsInitializer = new DcfsInitializer();
-        boolean autoinitialize = Boolean.parseBoolean(props.getProperty("dcfs.admin.autoinitialize"));
-        if (autoinitialize) {
-            dcfsInitializer.restartDcfs();
-        }
-    }
-    
-    
-    @GET
-    @Path("/admin/restartSystem/{user}/{password}")
-    public String restartSystem(@PathParam("user") String user, @PathParam("password") String password) {  //in future better a post
-        AclManager aclManager = new AclManager();
-        if (aclManager.verifyAdminDcfs(user, password)) {
-            dcfsInitializer.restartDcfs();
-            return "Dcf-Service restarted";
-        }
-        return "Dcf-Service not restarted";
-    }
-
-    @GET
-    @Path("/admin/startCustomInitializer/{user}/{password}")
-    public String startCostomInitializer(@PathParam("user") String user, @PathParam("password") String password) {  //in future better a post
-        AclManager aclManager = new AclManager();
-        if (aclManager.verifyAdminDcfs(user, password)) {
-            dcfsInitializer.runCustomInitializer();
-            return "Dcf-Service CustomInitializer started";
-        }
-        return "Dcf-Service CustomInitializer not started";
-    }
-
+    /**
+     * Simple way to understand if system is up
+     * @return
+     */
     @GET
     public String hello() {
-        return "Dcf-Service ( enabledTopics: "+dcfsInitializer.getEnabledTopics()+" enabledStreams"+dcfsInitializer.getEnabledStreams()+" )";
+        return "Dcf-Service running.";
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public DcfsMainRest() throws Exception {
         logger.info("DCFS in build main");
     }
 
+    /**
+     *
+     * @param servletContextEvent
+     */
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         System.out.println("DCFS Running on created");
     }
 
+    /**
+     *
+     * @param servletContextEvent
+     */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         logger.info("DCFS Shutting down");

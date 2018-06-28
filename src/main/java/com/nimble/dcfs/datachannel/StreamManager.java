@@ -1,8 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018 a.musumeci.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+ 
 package com.nimble.dcfs.datachannel;
 import com.nimble.dcfs.db.*;
 import com.nimble.dcfs.filtering.KsqlGateway;
@@ -10,7 +21,7 @@ import com.nimble.dcfs.filtering.KsqlGateway;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -22,29 +33,39 @@ public class StreamManager {
     DataChannelManager  dataChannelManager  = new DataChannelManager ();
     AclManager aclManager  = new AclManager();
     
-    public LinkedHashMap  getStreamMetadata(Integer idDataChannel) {
-        LinkedHashMap streamMetadata = new LinkedHashMap();
-        DataChannel dataChannel = dataChannelManager.getDataChannel( idDataChannel );
+    // TODO $$ cambiare tipo di dato, non li restituisce in ordine
+    public ArrayList<MetadataRow>  getStreamMetadata(Integer idProducer, Integer idConsumer, String streamName) {
+        ArrayList<MetadataRow> streamMetadata = new ArrayList();
+        HashMap<String, MetadataRow> metadata = new HashMap();
+        String dataChannelName = streamName.substring(streamName.lastIndexOf("_")+1);
+        DataChannel dataChannel  = dataChannelManager.getDataChannel(idProducer, dataChannelName);
 
         Channel channel = dataChannelManager.getChannel( dataChannel.getIdChannel() );
         String fieldTypeList = channel.getFieldTypeList();
         String[] keyValuePairs = fieldTypeList.split(",");              //split the string to creat key-value pairs
 
         for(String pair : keyValuePairs) {
-            String[] entry = pair.trim().split(" ");                   
-            streamMetadata.put(entry[0].trim(), entry[1].trim());
+            String[] entry = pair.trim().split(" ");
+            MetadataRow mdr = new MetadataRow(entry[0].trim(), entry[1].trim());
+            metadata.put(entry[0].trim(), mdr);
+            streamMetadata.add(mdr);
         }
 
         String fieldListDataChannel = dataChannel.getFieldList();
+        String fieldListConsumer = this.getFieldList(idProducer, idConsumer, streamName);
+        if (!"*".equals(fieldListConsumer)) {
+            fieldListDataChannel = fieldListConsumer;
+        }
+
         if (!"*".equalsIgnoreCase(dataChannel.getFieldList())) {
-            LinkedHashMap dataChannelStreamMetadata = new LinkedHashMap();
+            ArrayList<MetadataRow> dataChannelStreamMetadata = new ArrayList();
             String[] fields = fieldListDataChannel.split(",");              //split the string to creat key-value pairs
             for(String field : fields) {
-                dataChannelStreamMetadata.put(field.trim(), streamMetadata.get(field));
+                dataChannelStreamMetadata.add (metadata.get(field.trim()));
             }
             streamMetadata = dataChannelStreamMetadata;
         }
-        //TODO $$ fare il metadata anche sui fieldlist dei gruppi e del singolo utente in futuro
+
         return streamMetadata;
     }
     
@@ -60,7 +81,7 @@ public class StreamManager {
                     DataChannel dataChannel = dataChannelManager.getDataChannel( fsc.getIdDataChannel() );
                     Channel channel = dataChannelManager.getChannel( dataChannel.getIdChannel() );
                     User producer = aclManager.getUser( channel.getIdProducer() );
-                    if (producer.getId().equals(idProducer)) {
+                    if (producer.getId().equals(idProducer)) { //consumer could be subscribed to many producer
                          avaiableStreams.add(producer.getProducerNamespace().toUpperCase()+"_STREAMS_DC_"+dataChannel.getName().toUpperCase());
                      }
                  } else {
@@ -97,7 +118,6 @@ public class StreamManager {
     
     
     private ArrayList<String> getDropStreamCommands() {
-                  AclManager aclManager = new AclManager();
                     ArrayList<String> dropList = new ArrayList();
                     List<User> userList = aclManager.getProducerList( );
                     Iterator<User> iU = userList.iterator();
@@ -131,7 +151,7 @@ public class StreamManager {
                     while (iU.hasNext()) {
                         User producer = iU.next();
                         String namespace = producer.getProducerNamespace().toUpperCase()+"_";
-                        List<Channel> channelList = dataChannelManager.getProducerChannel( producer.getId() );
+                 List<Channel> channelList = dataChannelManager.getProducerChannel( producer.getId() );
                         Iterator<Channel> iC = channelList.iterator();
                         while (iC.hasNext()) {
                             Channel channel = iC.next();
@@ -151,7 +171,7 @@ public class StreamManager {
     }
     
     
-    public void executeStreamCommandList (ArrayList<String> commandList) {
+    private void executeStreamCommandList (ArrayList<String> commandList) {
     
             KsqlGateway ksqlGateway = new KsqlGateway();
             for (int i=0; i< commandList.size(); i++ ) {
@@ -178,6 +198,92 @@ public class StreamManager {
         return getAvaiableConsumerStream(idProducer, idConsumer).contains(streamName);
     }
 
+    public String getFilterList(Integer idProducer, Integer idConsumer, String streamName) {
+        String filterList = "";
+        streamName = streamName.substring(streamName.lastIndexOf("_")+1, streamName.length());
+        DataChannel dataChannel = dataChannelManager.getDataChannel(idProducer, streamName);
+
+            List<FilteredSubscriptionChannel> filteredSubscriptionChannel = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("FilteredSubscriptionChannel.findByIdDataChannelAndIdConsumer").setParameter("idDataChannel", dataChannel.getId()).setParameter("idConsumer", idConsumer).getResultList();
+            Iterator<FilteredSubscriptionChannel> ifsc = filteredSubscriptionChannel.iterator();
+            
+            while (ifsc.hasNext()) {
+                FilteredSubscriptionChannel fsc = ifsc.next();
+                if ( fsc.getIdGroup() <= 0 ) {
+                    filterList = fsc.getFilterValue();
+                    if (filterList == null) {
+                        filterList="";
+                    }
+                    break;
+                }
+            }
+
+            filteredSubscriptionChannel = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("FilteredSubscriptionChannel.findByIdConsumer").setParameter("idConsumer", idConsumer).getResultList();
+            ifsc = filteredSubscriptionChannel.iterator();
+
+             while (ifsc.hasNext()) {
+                 FilteredSubscriptionChannel fsc = ifsc.next();
+                 if (fsc.getIdGroup() > 0 ) {
+                     List<FilterGroupChannel> filterGroupChannels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("FilterGroupChannel.findByIdGroupConsumerAndIdDataChannel").setParameter("idDataChannel", dataChannel.getId()).setParameter("idGroupConsumer", fsc.getIdGroup()).getResultList();
+                     Iterator<FilterGroupChannel> fgcs = filterGroupChannels.iterator();
+                     while (fgcs.hasNext()) {
+                         FilterGroupChannel filterGroupChannel = fgcs.next();
+                         if ( filterList.length()> 0 ) {
+                             filterList += " AND " + filterGroupChannel.getFilterValue();
+                         } else {
+                            filterList = filterGroupChannel.getFilterValue();
+                         }
+                         break;
+                     }
+
+                 }
+             }
+
+        return filterList;
+    }
+    
+    public String getFieldList(Integer idProducer, Integer idConsumer, String streamName) {
+        String fieldList = "";
+        streamName = streamName.substring(streamName.lastIndexOf("_")+1, streamName.length());
+        DataChannel dataChannel = dataChannelManager.getDataChannel(idProducer, streamName);
+
+            List<FilteredSubscriptionChannel> filteredSubscriptionChannel = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("FilteredSubscriptionChannel.findByIdDataChannelAndIdConsumer").setParameter("idDataChannel", dataChannel.getId()).setParameter("idConsumer", idConsumer).getResultList();
+            Iterator<FilteredSubscriptionChannel> ifsc = filteredSubscriptionChannel.iterator();
+            
+            while (ifsc.hasNext()) {
+                FilteredSubscriptionChannel fsc = ifsc.next();
+                if (fsc.getIdGroup() <= 0 && fsc.getIdDataChannel()>0) {
+                    fieldList = fsc.getFieldList();
+                    break;
+                }
+            }
+
+            if (fieldList.length()==0) {
+                    filteredSubscriptionChannel = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("FilteredSubscriptionChannel.findByIdConsumer").setParameter("idConsumer", idConsumer).getResultList();
+                    ifsc = filteredSubscriptionChannel.iterator();
+
+                     while (ifsc.hasNext()) {
+                         FilteredSubscriptionChannel fsc = ifsc.next();
+                         if (fsc.getIdGroup() > 0 ) {
+                             List<FilterGroupChannel> filterGroupChannels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("FilterGroupChannel.findByIdGroupConsumerAndIdDataChannel").setParameter("idDataChannel", dataChannel.getId()).setParameter("idGroupConsumer", fsc.getIdGroup()).getResultList();
+                             Iterator<FilterGroupChannel> fgcs = filterGroupChannels.iterator();
+                             while (fgcs.hasNext()) {
+                                 FilterGroupChannel filterGroupChannel = fgcs.next();
+                                 fieldList = filterGroupChannel.getFieldList();
+                                 break;
+                             }
+
+                         }
+                     }
+            }
+
+
+            if (fieldList.length()==0) {
+                fieldList="*";
+            }
+            return fieldList;
+    }
+    
+    
 
         
 }

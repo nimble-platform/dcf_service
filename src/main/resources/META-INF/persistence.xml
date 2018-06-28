@@ -11,8 +11,8 @@
     <class>com.nimble.dcfs.db.DataChannel</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-     <!-- property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/whiDatachannelfilteringservicedb?zeroDateTimeBehavior=convertToNull"/ -->
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/holDatachannelfilteringservicedb?zeroDateTimeBehavior=convertToNull"/>
+     <!--- property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/whiDatachannelfilteringservicedb?zeroDateTimeBehavior=convertToNull"/ -->
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/holDatachannelfilteringservicedb?zeroDateTimeBehavior=convertToNull" />
       <property name="javax.persistence.jdbc.user" value="nimble"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="nimble"/>

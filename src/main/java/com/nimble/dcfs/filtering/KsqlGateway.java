@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 a.musumeci.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nimble.dcfs.filtering;
 
 import java.io.BufferedReader;
@@ -7,24 +23,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
-import java.util.List;
 import java.util.ArrayList;
 import javax.ws.rs.core.Application;
 import com.google.gson.Gson;
-import com.nimble.dcfs.datachannel.DataChannelManager;
-import com.nimble.dcfs.custom.producer.CsvProducer;
-import com.nimble.dcfs.util.PropertiesLoader;
 import java.util.Properties;
+import java.util.List;
+import com.nimble.dcfs.util.PropertiesLoader;
 
 
 /**
@@ -87,13 +91,13 @@ public class KsqlGateway extends Application {
         String inputLine;
         List<String> resultList = new ArrayList<String>();
 
-        StringBuffer response = new StringBuffer();
-
         while ( (inputLine = in.readLine()) != null && !inputLine.isEmpty()  ) {
             resultList.add(inputLine.trim());
         }
 
         in.close();
+        connection.disconnect();
+        
         String json = new Gson().toJson( resultList );     
         return json;
 
@@ -101,7 +105,6 @@ public class KsqlGateway extends Application {
 
     private String formatQueryForRest(String query) {
         query = query.replaceAll("'", "\'");
-        //query = query.replaceAll("\"", "\\\"");
         return query;
     }
     

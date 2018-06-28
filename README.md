@@ -6,9 +6,10 @@
 
 <a name="getting-started"></a>
 ## Getting Started
-This service wanna be an add-on in order to use Data-Channel build over Kafka and filter topic's data to serve to consumers many views on the same set or subset of message data.
-This allow producer's data to grant different way to read on a topic, control access to them, filter data per row with where conditions - similarly to sql - and per columns.
-The heart of the service is Kafka which is accessed by using Ksql server respecting rules and filter instructions written in a database.
+This service want to be an add-on in order to allow the usage of Data-Channel build over Kafka and to filter topic's data to serve to consumers many views on the same set or subset of data.
+This allow data producers to grant different level of access control over of messages they are going to publish into Data-channel by filtering data per row with WHERE conditions - similarly to sql - and per columns.
+
+The heart of the service is Kafka which is accessable through KSQL. The access to the Kafka(through KSQL) is managed through a set of rules and filter instructions written in a database.
 
 - download and install
 
@@ -39,6 +40,7 @@ Not mandatory but maybe usefull for other Nimble's layer.
 
 In other way you can download opensource Confluent distribution starting from 4.1.0 version or 
 https://www.confluent.io/download/
+
 and use 
 confluent start 
 script
@@ -50,6 +52,7 @@ mysql -p -u [user] [database] < ../db/holDatachannelfilteringservicedb.sql.sql
 
 edit persistence.xml 
 edit Dcfs.properties
+edit DemoNimbleDcfs.properties
 
 ../apache-tomcat-8.5.31/bin/startup.sh
 
@@ -62,11 +65,11 @@ launch admin webservices in this order
 http://localhost:28080/dcfs/admin/restartSystem/nimble/nimble
 in order to create topics and ApacheKafkaStreams
 
-http://localhost:28080/dcfs/admin/startCustomInitializer/nimble/nimble
+http://localhost:28080/dcfs/admin/startCustomProducer/nimble/nimble
 in order to send to kafka broker messages (in this istance only delimited messages are supported; json un future releases)
 
 to test login (user credentials are set in DB)
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd/1
+http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
 
 to filter a dataChannel (by using Apache Stream from ksql)
 http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_PRODUCTDATA/serialnumber='151638000903'
@@ -76,4 +79,4 @@ Look at ../doc/webservices.txt in order to have some other example of Rest Calls
 
 
  ---
-The project leading to this application has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 723810.
+The project leading to this application has received funding from the European Union Horizon 2020 research and innovation programme under grant agreement No 723810.

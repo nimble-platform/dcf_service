@@ -1,15 +1,25 @@
-/**
+/*
+ * Copyright 2018 a.musumeci.
  *
- * @author a.musumeci
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package com.nimble.dcfs.datachannel;
+ package com.nimble.dcfs.admin;
 
 
+import com.nimble.dcfs.datachannel.AclManager;
+import com.nimble.dcfs.datachannel.DataChannelManager;
 import com.nimble.dcfs.db.Channel;
-import com.nimble.dcfs.db.DataChannel;
 import com.nimble.dcfs.db.User;
-import com.nimble.dcfs.util.PropertiesLoader;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,43 +31,40 @@ import org.I0Itec.zkclient.ZkConnection;
 import org.apache.log4j.Logger;
 
 import java.util.Properties;
-import java.util.concurrent.Future;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 
 /**
  *
  * @author a.musumeci
  */
-public class TopicManager implements AutoCloseable {
+class TopicManager {
     
     private final static Logger logger = Logger.getLogger(TopicManager.class);
     Properties propConfiguration;
-
     int partitions;
     int replications;
+
     
-    ZkClient zkClient;
-    ZkUtils zkUtils;
-    
-    public TopicManager (Properties propConfiguration) {
+    TopicManager (Properties propConfiguration) {
         this.propConfiguration = propConfiguration;
+        partitions = Integer.parseInt(  propConfiguration.getProperty("zookeeper.partitions") );
+        replications = Integer.parseInt(  propConfiguration.getProperty("zookeeper.replications") );
+    }
+
+    private ZkUtils getZkUtils() {
 
         String connectionString = propConfiguration.getProperty("zookeeper.connect");
         int sessionTimeoutMs = Integer.parseInt(  propConfiguration.getProperty("zookeeper.sessionTimeoutMs") );
         int connectionTimeout = Integer.parseInt(  propConfiguration.getProperty("zookeeper.connectionTimeout") );
 
-        partitions = Integer.parseInt(  propConfiguration.getProperty("zookeeper.partitions") );
-        replications = Integer.parseInt(  propConfiguration.getProperty("zookeeper.replications") );
-
-        zkClient = new ZkClient(connectionString, sessionTimeoutMs, connectionTimeout, ZKStringSerializer$.MODULE$);
-        zkUtils = new ZkUtils(zkClient, new ZkConnection(connectionString), false);
+        ZkClient zkClient = new ZkClient(connectionString, sessionTimeoutMs, connectionTimeout, ZKStringSerializer$.MODULE$);
+        ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(connectionString), false);
+        return zkUtils;
 
     }
+            
     
     private void createTopic(String topicName) {
+        ZkUtils zkUtils = getZkUtils();
         topicName = topicName.toUpperCase();
         if (!AdminUtils.topicExists(zkUtils, topicName)) {
             try {
@@ -69,19 +76,25 @@ public class TopicManager implements AutoCloseable {
             }  
         } else {
           logger.trace(String.format("Topic '%s' yet exists", topicName));
-        };
+        }
+        zkUtils.close();
     }
     
     private void deleteTopic(String topicName) {
+        ZkUtils zkUtils = getZkUtils();
         topicName = topicName.toUpperCase();
         if (AdminUtils.topicExists(zkUtils, topicName)) {
                 AdminUtils.deleteTopic(zkUtils, topicName);
         }
+        zkUtils.close();
     }
     
     private boolean existTopic(String topicName) {
+        ZkUtils zkUtils = getZkUtils();
         topicName = topicName.toUpperCase();
-        return (AdminUtils.topicExists(zkUtils, topicName));
+        boolean exist = (AdminUtils.topicExists(zkUtils, topicName));
+        zkUtils.close();
+        return exist;
     }
     
     private void recreateTopic(String topicName) {
@@ -90,12 +103,7 @@ public class TopicManager implements AutoCloseable {
         createTopic(topicName);
     }
     
-    public void close() {
-        zkUtils.close();
-        zkClient.close();
-    }
-    
-    public int recreateDcfsTopics() {
+    int recreateDcfsTopics() {
         int enabledTopics = 0;
             DataChannelManager  dataChannelManager  = new DataChannelManager ();
             AclManager aclManager = new AclManager();

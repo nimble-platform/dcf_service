@@ -1,9 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018 a.musumeci.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package com.nimble.dcfs.db;
+ package com.nimble.dcfs.db;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -28,10 +38,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "FilteredSubscriptionChannel.findAll", query = "SELECT f FROM FilteredSubscriptionChannel f")
     , @NamedQuery(name = "FilteredSubscriptionChannel.findById", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.id = :id")
     , @NamedQuery(name = "FilteredSubscriptionChannel.findByIdDataChannel", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.idDataChannel = :idDataChannel")
+    , @NamedQuery(name = "FilteredSubscriptionChannel.findByIdDataChannelAndIdConsumer", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.idDataChannel = :idDataChannel AND f.idConsumer = :idConsumer")
     , @NamedQuery(name = "FilteredSubscriptionChannel.findByIdConsumer", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.idConsumer = :idConsumer")
     , @NamedQuery(name = "FilteredSubscriptionChannel.findByIdGroup", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.idGroup = :idGroup")
-    , @NamedQuery(name = "FilteredSubscriptionChannel.findByFieldList", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.fieldList = :fieldList")
-    , @NamedQuery(name = "FilteredSubscriptionChannel.findByFilterValue", query = "SELECT f FROM FilteredSubscriptionChannel f WHERE f.filterValue = :filterValue")})
+})
 public class FilteredSubscriptionChannel implements Serializable {
 
     private static final long serialVersionUID = 1L;
