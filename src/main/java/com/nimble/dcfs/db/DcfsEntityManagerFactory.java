@@ -32,7 +32,16 @@ public class DcfsEntityManagerFactory {
                 EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.nimble.dcfs.PERSISTENCE");
                 em = emf.createEntityManager();
             }
+            
             return em;
     }
-   
+
+        public static void stopEntityManager() {
+            if (em != null) {
+                em.close();
+                em = null;
+            }
+        }
+
+    
 }

@@ -73,23 +73,6 @@ public class DcfsAdminRest extends Application implements ServletContextListener
 
     /**
      *
-     * @param userAdmin
-     * @param passwordAdmin
-     * @return
-     */
-    @GET
-    @Path("/startCustomProducer/{userAdmin}/{passwordAdmin}")
-    public String startCustomProducer(@PathParam("userAdmin") String userAdmin, @PathParam("passwordAdmin") String passwordAdmin) {
-        AclManager aclManager = new AclManager();
-        if (aclManager.verifyAdminDcfs(userAdmin, passwordAdmin)) {
-            dcfsInitializer.runCustomProducers();
-            return "Dcf-Service CustomProducer started";
-        }
-        return "Dcf-Service CustomProducer not started";
-    }
-
-    /**
-     *
      * @throws Exception
      */
     public DcfsAdminRest() throws Exception {

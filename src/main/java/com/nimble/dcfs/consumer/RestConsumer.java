@@ -74,6 +74,7 @@ public class RestConsumer extends Application {
     @Path("/dataChannelMetadata/{login}/{password}/{idProducer}/{streamName}")
     @Produces(MediaType.APPLICATION_JSON)
     public final Response getDataChannelMetadata(@PathParam("login") String login, @PathParam("password") String password, @PathParam("idProducer") Integer idProducer, @PathParam("streamName") String streamName ) { 
+            logger.info("getDataChannelMetadata");
             User userConsumer = aclManager.getConsumer( login, password);
             if (userConsumer == null) {
                 return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("User unknown") );
@@ -94,12 +95,35 @@ public class RestConsumer extends Application {
     @Path("/listAvaiableDataChannel/{login}/{password}/{idProducer}")
     @Produces(MediaType.APPLICATION_JSON)
     public final Response getListAvaiableDataChannel(@PathParam("login") String login, @PathParam("password") String password, @PathParam("idProducer") Integer idProducer) { 
+            logger.info("getListAvaiableDataChannel");
             User userConsumer = aclManager.getConsumer( login, password);
             if (userConsumer == null) {
                 return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("User unknown") );
             }
             
             String jsonResponse = new Gson().toJson( streamManager.getAvaiableConsumerStream(idProducer, userConsumer.getId()) );    
+            return createResponse(Response.Status.OK, jsonResponse);
+    }
+    
+    /**
+     *
+     * @param login Consumer login
+     * @param password Consumer password
+     * @param idProducer user id of the data producer
+     * @return list of all avaiable data stream
+     */
+    @GET
+    @Path("/listAvaiableProducer/{login}/{password}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public final Response getListAvaiableDataChannel(@PathParam("login") String login, @PathParam("password") String password) { 
+            logger.info("getListAvaiableDataChannel");
+            User userConsumer = aclManager.getConsumer( login, password);
+            if (userConsumer == null) {
+                return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("User unknown") );
+            }
+            
+            //$$da controllare!
+            String jsonResponse = new Gson().toJson( aclManager.getProducerForConsumer(userConsumer.getId()) );    
             return createResponse(Response.Status.OK, jsonResponse);
     }
     
@@ -113,6 +137,7 @@ public class RestConsumer extends Application {
     @Path("/loginConsumer/{login}/{password}")
     @Produces(MediaType.APPLICATION_JSON)
     public final Response loginConsumer(@PathParam("login") String login, @PathParam("password") String password) {
+            logger.info("loginConsumer");
             User userConsumer = aclManager.getConsumer( login, password);
             if (userConsumer != null) {
                 return createResponse(Response.Status.OK, new Gson().toJson(userConsumer)) ;
@@ -134,6 +159,7 @@ public class RestConsumer extends Application {
     @Path("/filterChannel/{login}/{password}/{idProducer}/{streamName}/{filtervalue}")
     @Produces(MediaType.APPLICATION_JSON)
     public final Response getFilteredMessageForSubscription(@PathParam("login") String login, @PathParam("password") String password,  @PathParam("idProducer") Integer idProducer, @PathParam("streamName") String streamName, @PathParam("filtervalue") String filtervalue) { 
+            logger.info("getFilteredMessageForSubscription");
         try {
             User userConsumer = aclManager.getConsumer( login, password);
             if (userConsumer == null) {
@@ -153,31 +179,39 @@ public class RestConsumer extends Application {
                 if (fieldList!=null && !"".equals(fieldList) && !"null".equalsIgnoreCase(fieldList)  ) {
                     ksqlQuery += fieldList;
                 } else {
-                    ksqlQuery += " * ";
+                    ksqlQuery += " * "; //in production may be necessary to limit this kind of query
                 }
                 
                 ksqlQuery += " from "+streamName;
-                if ( (filterConditions!=null && !"".equals(filterConditions) && !"null".equalsIgnoreCase(filterConditions)) || (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue) ) ) {
+                if ( (filterConditions!=null && !"".equals(filterConditions) && !"null".equalsIgnoreCase(filterConditions)) || (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue) && !"*".equalsIgnoreCase(filtervalue) ) ) {
                     ksqlQuery +=" where ";
                     if (filterConditions!=null && !"".equals(filterConditions) && !"null".equalsIgnoreCase(filterConditions) ) {
                         ksqlQuery += filterConditions+" AND ";
                     } 
-                    if (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue) ) {
+                    if (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue)&& !"*".equalsIgnoreCase(filtervalue) ) {
                         ksqlQuery += " ( "+filtervalue+" )";
                     } 
                     
                     
+                } else {
+                    ksqlQuery +=" LIMIT "+ksqlGateway.MAXROWRESULTSET;
                 } 
                 
-                ksqlQuery +=";";
+               
+               ksqlQuery +=";";
 
                 logger.info("ksqlQuery executing = "+ksqlQuery);
 
                 String jsonResponse = ksqlGateway.getJsonResponse(ksqlQuery);
+
+                /*if (streamManager.isJsonStream(idProducer, streamName)) {
+                    jsonResponse = FlatternManager.getUnFlatten(jsonResponse);
+                }*/
+
                 return createResponse(Response.Status.OK, jsonResponse);
             } else throw new Exception ("you have not grant to read from this Stream");
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logger.error("Failed to read channels for target - " + filtervalue, e);
             return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Failed to get data for Stream - " + streamName +" ("+e.getMessage()+")") );
         }

@@ -1,81 +1,54 @@
 # dcf_service
 
-> ** DataChannel Filtering Service **
+> ** DataChannel Filtering Service rel 0.5 - 5.12.2018 **
 
 
 
 <a name="getting-started"></a>
 ## Getting Started
-This service want to be an add-on in order to allow the usage of Data-Channel build over Kafka and to filter topic's data to serve to consumers many views on the same set or subset of data.
-This allow data producers to grant different level of access control over of messages they are going to publish into Data-channel by filtering data per row with WHERE conditions - similarly to sql - and per columns.
+This service want to be an add-on in Nimble in order to allow the usage of Data-Channel build over Kafka and to filter topic's data to offer to consumers many views on the same messages set or subset of data.
+This service allow data producers to grant different level of access control over messages they are going to publish into Data-Channel by filtering data per row with WHERE conditions - similarly to sql - and to choice list of  columns to show.
 
-The heart of the service is Kafka which is accessable through KSQL. The access to the Kafka(through KSQL) is managed through a set of rules and filter instructions written in a database.
+The heart of the service is Kafka which is accessable through KSQL by using exposed rest service  in Tomcat. The access to the Kafka (through KSQL) is managed through a set of rules and filter instructions written in an internal instance of database. In Nimble we will have kafka for producers and for normal consumers provided by platform over bluemix; if use case need to filter published messages, to create other view of or subset of them for special consumers, this service is usefull.
 
-- download and install
+This service create a mirror only for topics which are enabled by DCFS_TOPIC_TO_MIRROR enviroment variable. Channel, users, group and filter have to be configured in initial sql in internal mysql.
 
-Zookeper https://github.com/apache/zookeeper from 0.11.0 released in on 28 Jun 2017 or later
-Kafka https://github.com/apache/kafka  from 0.11.0 released in on 28 Jun 2017 or  later
-Ksql (from https://github.com/confluentinc/ksql) from 4.1 on 17 Apr 2018 or later
+### - start
+clone the project in https://github.com/nimble-platform/dcf_service
 
-edit zookeeper.properties
-edit kafka/server.properties
-edit ksql/ksql-server.properties
+customize your .env file
 
-look at ../etc_config sample files
+./runDcfsNimble.sh &
+   in a docker-compose enabled sys op.
 
-Start ZooKeeper
-../bin/zookeeper-server-start ../etc/kafka/zookeeper.properties &
-Start Kafka
-../bin/kafka-server-start ../etc/kafka/server.properties &
-Start Kafka-Ksql - 
-../bin/ksql-server-start ../etc/ksql/ksql-server.properties &
+### - stop
+docker-compose down
 
-Not mandatory but maybe usefull for other Nimble's layer.
+### - after start
 
- Start Schema Registry (only for Avro messages - not supported in this service release)
-../bin/schema-registry-start ../etc/schema-registry/schema-registry.properties &
- Start Kafka-rest (usefull but not necessary)
-../bin/kafka-rest-start ../etc/kafka-rest/kafka-rest.properties &
+- check healt
+http://localhost:28080/dcf-service/
 
+- restart dcfs (create stream, re-create topics)
+http://localhost:28080/dcf-service/admin/restartSystem/nimble/nimble
 
-In other way you can download opensource Confluent distribution starting from 4.1.0 version or 
-https://www.confluent.io/download/
+- login and streams name
+http://localhost:28080/dcf-service/consumer/loginConsumer/CS/pwd
+http://localhost:28080/dcf-service/consumer/listAvaiableDataChannel/CS/pwd/1
+http://localhost:28080/dcf-service/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
 
-and use 
-confluent start 
-script
+- produce data
+directly in ibm kafka 
 
-service start mysql
-mysql -p -u [user] [database] < ../db/holDatachannelfilteringservicedb.sql.sql
+- filter data (the dcf service offers filter only over data produced after his run; the oldest messages are ignored)
+http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
+http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA/serialnumber='371149701568'
+http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_INTERVENTDATA/serialnumber='371149701568'
 
-(configure data db for your needs - see ../doc/FilterScenarios.txt)
-
-edit persistence.xml 
-edit Dcfs.properties
-edit DemoNimbleDcfs.properties
-
-../apache-tomcat-8.5.31/bin/startup.sh
-
-deploy dcf_service.war
-
-read db/Read.me to understand the Demo scenario
-
-launch admin webservices in this order
-
-http://localhost:28080/dcfs/admin/restartSystem/nimble/nimble
-in order to create topics and ApacheKafkaStreams
-
-http://localhost:28080/dcfs/admin/startCustomProducer/nimble/nimble
-in order to send to kafka broker messages (in this istance only delimited messages are supported; json un future releases)
-
-to test login (user credentials are set in DB)
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
-
-to filter a dataChannel (by using Apache Stream from ksql)
-http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_PRODUCTDATA/serialnumber='151638000903'
+- "no grant" example
+http://localhost:28080/dcf-service/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
 
 
-Look at ../doc/webservices.txt in order to have some other example of Rest Calls.
 
 
  ---

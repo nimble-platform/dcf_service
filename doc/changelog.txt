@@ -1,3 +1,13 @@
+05.12 rel 0.5
+
+System based over docker ready to be integrated in Nimble platform
+Service is now use case indipendent and customizable throught sql file and enviroment variables
+
+final implementation of getMetadata
+detached producer's services in another internal project
+
+json topics enabled: filtering only possible over flatterned version.
+
 28.6 rel 0.4
 
 Producer is able now to configure a subscription of an user without group directly to a datachannel

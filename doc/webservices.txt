@@ -3,79 +3,45 @@ Interrogazione WS
 
 Admin
 -----
-#restart DCFS (recreate topics, recreate streams, run customInizializer) - usefull if anything has changed in db
-http://localhost:28080/dcfs/admin/restartSystem/nimble/nimble
+#restart dcf-service (recreate topics, recreate streams, run customInizializer) - usefull if anything has changed in db
+http://localhost:28080/dcf-service/admin/restartSystem/nimble/nimble
 
 /admin/restartCustomProducer/{user}/{password}
-http://localhost:28080/dcfs/admin/startCustomProducer/nimble/nimble
+http://localhost:28080/dcf-service/admin/startCustomProducer/nimble/nimble
 
 
 CONSUMER BASIC
 --------------
-/dcfs/consumer
+/dcf-service/consumer
 
 - /loginConsumer/{login}/{password}
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
+http://localhost:28080/dcf-service/consumer/loginConsumer/CS/pwd
 
 
 - /listAvaiableDataChannel/{login}/{password}/{idProducer}
-http://localhost:28080/dcfs/consumer/listAvaiableDataChannel/CS/pwd/1
+http://localhost:28080/dcf-service/consumer/listAvaiableDataChannel/CS/pwd/1
 
 
-CONSUMER HOL
---------------
-/dcfs/consumer
+CONSUMER 
+--------
+- check healt
+http://localhost:28080/dcf-service/
 
-- /loginConsumer/{login}/{password}
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
+- restart dcfs (create stream, re-create topics)
+http://localhost:28080/dcf-service/admin/restartSystem/nimble/nimble
 
-- /filterChannel/{login}/{password}/{idProducer}/{streamName}/{filtervalue}
-http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_DC_PRODUCTDATA/serialnumber='151638000903'
+- login and streams name
+http://localhost:28080/dcf-service/consumer/loginConsumer/CS/pwd
+http://localhost:28080/dcf-service/consumer/listAvaiableDataChannel/CS/pwd/1
+http://localhost:28080/dcf-service/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
 
-- /listAvaiableDataChannel/{login}/{password}/{idProducer}
-http://localhost:28080/dcfs/consumer/listAvaiableDataChannel/CS/pwd/1
+- produce data
+directly in ibm kafka 
 
-- /dataChannelMetadata/{login}/{password}/{idProducer}/{streamName}
-http://localhost:28080/dcfs/consumer/dataChannelMetadata/CS/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_DC_PRODUCTDATA
+- filter data (the dcf service offers filter only over data produced after his run; the oldest messages are ignored)
+http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
+http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA/serialnumber='371149701568'
+http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_INTERVENTDATA/serialnumber='371149701568'
 
-- try to read from a DataChannel whitout permission
-http://localhost:28080/dcfs/consumer/filterChannel/FST/pwd/1/IT_NIMBLE_DCFSDEMO_STREAMS_DC_QUALITYDATA/serialnumber='151638000903'
-
-
-
-
-
-WHI CONSUMER
-------------
-- /filterChannel/{login}/{password}/{idProducer}/{streamName}/{filtervalue}
-http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151611006559'
-
-- /dataChannelMetadata/{login}/{password}/{idProducer}/{streamName}
-http://localhost:28080/dcfs/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
-
-
-/dcfs/whirpool
-
-- /loginConsumer/{login}/{password}
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
-
-- /listAvaiableDataChannel/{login}/{password}
-http://localhost:28080/dcfs/whirpool/listAvaiableDataChannel/CS/pwd
-
-- /productionData/{login}/{password}/{serialnumber}
-http://localhost:28080/dcfs/whirpool/productionData/CS/pwd/151611006559
-
-- /qualityData/{login}/{password}/{serialnumber}
-http://localhost:28080/dcfs/whirpool/qualityData/CS/pwd/151611006559
-
-
-- /buyData/{login}/{password}/{serialnumber}
-http://localhost:28080/dcfs/whirpool/buyData/CS/pwd/151611006559
-
-- /interventData/{login}/{password}/{serialnumber}
-http://localhost:28080/dcfs/whirpool/interventData/CS/pwd/151611006559
-
-- /productData/{login}/{password}/{serialnumber}
-http://localhost:28080/dcfs/whirpool/productData/CS/pwd/151611006559
-
-
+- "no grant" example
+http://localhost:28080/dcf-service/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'

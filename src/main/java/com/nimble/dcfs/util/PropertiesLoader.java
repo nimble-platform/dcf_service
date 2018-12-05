@@ -28,6 +28,15 @@ public class PropertiesLoader {
     final private static Logger logger = Logger.getLogger(PropertiesLoader.class);
     final private static String propCfgFile = "Dcfs";
 
+    public static Properties loadDcfsConsumerProperties() { 
+        Properties consumerProps = new Properties();
+    
+                String consumerPropertiesfile = loadProperties().getProperty("dcfs.topic.consumer.propertiesfile");
+                if ( consumerPropertiesfile!= null && !"".equalsIgnoreCase(consumerPropertiesfile) ) {
+                        consumerProps = PropertiesLoader.loadProperties(consumerPropertiesfile);
+                }
+        return consumerProps;
+    }
     public static Properties loadProperties() { 
         return loadProperties(propCfgFile);
     }

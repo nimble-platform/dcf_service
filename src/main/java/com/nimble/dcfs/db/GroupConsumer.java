@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "GroupConsumer.findAll", query = "SELECT g FROM GroupConsumer g")
     , @NamedQuery(name = "GroupConsumer.findById", query = "SELECT g FROM GroupConsumer g WHERE g.id = :id")
+    , @NamedQuery(name = "GroupConsumer.findByIdUserInSubscription", query = "SELECT g FROM GroupConsumer g WHERE g.id in ( SELECT fsc.id from FilteredSubscriptionChannel fsc where fsc.idConsumer = :idConsumer ) ")
     , @NamedQuery(name = "GroupConsumer.findByIdProducer", query = "SELECT g FROM GroupConsumer g WHERE g.idProducer = :idProducer")
     , @NamedQuery(name = "GroupConsumer.findByDescription", query = "SELECT g FROM GroupConsumer g WHERE g.description = :description")})
 public class GroupConsumer implements Serializable {
