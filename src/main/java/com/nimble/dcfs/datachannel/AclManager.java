@@ -57,6 +57,17 @@ public class AclManager {
 
     /**
      *
+     * @param login
+     * @param password
+     * @return
+     */
+    public List<User> getProducerForConsumer(Integer idConsumer) {
+        List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findByIdConsumer").setParameter("idconsumer", idConsumer).getResultList();
+        return users;
+    }
+
+    /**
+     *
      * @param producerNamespace
      * @return
      */
@@ -96,9 +107,12 @@ public class AclManager {
      */
     public User getConsumer(String login, String password) {
         List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findByLoginPasswordConsumer").setParameter("login", login).setParameter("password", password).getResultList();
-        if (users.size()>0)
-        return users.get(0);
-        else return null;
+        if (users.size()>0) {
+            User user = users.get(0);
+            List<GroupConsumer> groupConsumer = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("GroupConsumer.findByIdUserInSubscription").setParameter("idConsumer", user.getId()).getResultList();
+            user.setGroupConsumer(groupConsumer);
+            return user;
+        } else return null;
     }
 
 }

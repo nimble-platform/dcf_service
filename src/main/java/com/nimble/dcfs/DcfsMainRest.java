@@ -18,6 +18,7 @@ package com.nimble.dcfs;
 
 
 
+import com.nimble.dcfs.db.DcfsEntityManagerFactory;
 import org.apache.log4j.Logger;
 
 import javax.inject.Singleton;
@@ -40,7 +41,7 @@ import javax.ws.rs.PathParam;
 @ApplicationPath("/")
 @Path("/")
 @Singleton
-public class DcfsMainRest extends Application implements ServletContextListener {
+public class DcfsMainRest extends Application implements ServletContextListener, AutoCloseable {
     private final Logger logger = Logger.getLogger(DcfsMainRest.class);
     private static Properties props = PropertiesLoader.loadProperties();
 
@@ -58,6 +59,7 @@ public class DcfsMainRest extends Application implements ServletContextListener 
      * @throws Exception
      */
     public DcfsMainRest() throws Exception {
+        //DcfsEntityManagerFactory.createEntityManager();
         logger.info("DCFS in build main");
     }
 
@@ -66,7 +68,7 @@ public class DcfsMainRest extends Application implements ServletContextListener 
      * @param servletContextEvent
      */
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        System.out.println("DCFS Running on created");
+            System.out.println("DCFS Running on created");
     }
 
     /**
@@ -75,7 +77,11 @@ public class DcfsMainRest extends Application implements ServletContextListener 
      */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        //DcfsEntityManagerFactory.stopEntityManager();
         logger.info("DCFS Shutting down");
     }
-
+    @Override
+    public void close() {
+        //DcfsEntityManagerFactory.stopEntityManager();
+    }
 }

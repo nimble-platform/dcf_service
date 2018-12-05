@@ -33,14 +33,15 @@ public class StreamManager {
     DataChannelManager  dataChannelManager  = new DataChannelManager ();
     AclManager aclManager  = new AclManager();
     
-    // TODO $$ cambiare tipo di dato, non li restituisce in ordine
-    public ArrayList<MetadataRow>  getStreamMetadata(Integer idProducer, Integer idConsumer, String streamName) {
+    public MetadataChannel getStreamMetadata(Integer idProducer, Integer idConsumer, String streamName) {
+        MetadataChannel metadataChannel = new MetadataChannel();
         ArrayList<MetadataRow> streamMetadata = new ArrayList();
         HashMap<String, MetadataRow> metadata = new HashMap();
         String dataChannelName = streamName.substring(streamName.lastIndexOf("_")+1);
         DataChannel dataChannel  = dataChannelManager.getDataChannel(idProducer, dataChannelName);
 
         Channel channel = dataChannelManager.getChannel( dataChannel.getIdChannel() );
+        metadataChannel.setKey(channel.getKey());
         String fieldTypeList = channel.getFieldTypeList();
         String[] keyValuePairs = fieldTypeList.split(",");              //split the string to creat key-value pairs
 
@@ -65,8 +66,9 @@ public class StreamManager {
             }
             streamMetadata = dataChannelStreamMetadata;
         }
-
-        return streamMetadata;
+        metadataChannel.setStreamMetadata(streamMetadata);
+        
+        return metadataChannel;
     }
     
     public ArrayList<String>  getAvaiableConsumerStream(Integer idProducer, Integer idConsumer) {
@@ -156,7 +158,12 @@ public class StreamManager {
                         while (iC.hasNext()) {
                             Channel channel = iC.next();
                             DataFormat dataFormat = dataChannelManager.getDataFormat( channel.getIdDataFormat() );
-                            createList.add("CREATE STREAM "+namespace+"STREAMS_"+channel.getTopicname().toUpperCase()+"( "+channel.getFieldTypeList()+")  WITH (KAFKA_TOPIC='"+namespace+channel.getTopicname().toUpperCase()+"', VALUE_FORMAT='"+dataFormat.getFormat().toUpperCase()+"', KEY = '"+channel.getKey().toUpperCase()+"');");
+                            String mainCreate = "CREATE STREAM "+namespace+"STREAMS_"+channel.getTopicname().toUpperCase()+"( "+channel.getFieldTypeList()+")  WITH (KAFKA_TOPIC='"+namespace+channel.getTopicname().toUpperCase()+"', VALUE_FORMAT='"+dataFormat.getFormat().toUpperCase()+"'";
+                            if (channel.getKey() != null && channel.getKey().length()>1) {
+                                mainCreate+=", KEY = '"+channel.getKey().toUpperCase()+"'";
+                            }
+                            mainCreate+=");";
+                            createList.add(mainCreate);
                             List<DataChannel> dataChannelList = dataChannelManager.getDataChannelList( channel.getId() );
                             Iterator<DataChannel> iDc = dataChannelList.iterator();
                             while (iDc.hasNext()) {
@@ -284,6 +291,12 @@ public class StreamManager {
     }
     
     
-
+    
+      public boolean isJsonStream(Integer idProducer, String streamName) {
+        String dataChannelName = streamName.substring(streamName.lastIndexOf("_")+1);
+        DataChannel dataChannel  = dataChannelManager.getDataChannel(idProducer, dataChannelName);
+        Channel channel = dataChannelManager.getChannel( dataChannel.getIdChannel() );
+        return channel.getIdDataFormat() == 2;
+      }
         
 }

@@ -22,6 +22,7 @@ package com.nimble.dcfs.util;
  */
 
 import com.nimble.dcfs.datachannel.StreamManager;
+import com.nimble.dcfs.datachannel.AclManager;
 import com.nimble.dcfs.datachannel.*;
 import com.nimble.dcfs.db.*;
 import com.nimble.dcfs.db.DcfsEntityManagerFactory;
@@ -36,7 +37,7 @@ public class TestUtilityClass {
 
         StreamManager streamManager = new StreamManager();
 
-        ArrayList<MetadataRow> mapMetadata = streamManager.getStreamMetadata(idProducer, idConsumer, streamName);
+        ArrayList<MetadataRow> mapMetadata = streamManager.getStreamMetadata(idProducer, idConsumer, streamName).getStreamMetadata();
         
         Iterator<MetadataRow> i = mapMetadata.iterator();
         while (i.hasNext()) {
@@ -59,12 +60,17 @@ public class TestUtilityClass {
         System.out.println(""+filterList);
     }
 
-    
+    void testLoginConsumer() {
+        AclManager aclManager = new AclManager();
+        User userConsumer = aclManager.getConsumer("CS", "pwd");
+        userConsumer.getGroupConsumer();
+    }
+
     public static void main (String argc[]) {
         TestUtilityClass testObj = new TestUtilityClass();
-        testObj.testGetFieldFilterList(new Integer(1), new Integer(7), "IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA");
-        testObj.testGetMetadataChannelList(new Integer(1), new Integer(7), "IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA");
-    
+        //testObj.testGetFieldFilterList(new Integer(1), new Integer(7), "IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA");
+        //testObj.testGetMetadataChannelList(new Integer(1), new Integer(7), "IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA");
+        //testObj.testLoginConsumer();
     }
     
     

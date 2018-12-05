@@ -85,7 +85,7 @@ public class DataChannelManager {
             Iterator<Channel> i = channels.iterator();
             while (i.hasNext()) {
                 avaiableTopics.add(
-                   namespace.toUpperCase()+"_"+i.next().getTopicname()
+                   namespace+"_"+i.next().getTopicname() //namespace.toUpperCase()+"_"+i.next().getTopicname()
                 );
             }
             return avaiableTopics;

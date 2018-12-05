@@ -17,6 +17,7 @@
 package com.nimble.dcfs.db;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -39,6 +41,18 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
     , @NamedQuery(name = "User.findAllProducer", query = "SELECT u FROM User u where u.isProducer=1")
     , @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id")
+    /*, @NamedQuery(name = "User.findByIdConsumer", query = "select * from User where id in (\n" +
+                                        "	select idproducer from Channel where id in (\n" +
+                                        "		SELECT idDataChannel from FilteredSubscriptionChannel WHERE idConsumer = :idConsumer \n" +
+                                        "	) union \n" +
+                                        "		select distinct idproducer from Channel where id in (\n" +
+                                        "			select idDataChannel from FilterGroupChannel where idGroupConsumer in (\n" +
+                                        "				SELECT idGroup from FilteredSubscriptionChannel WHERE idConsumer = :idConsumer  \n" +
+                                        "			)\n" +
+                                        "		)\n" +
+                                        ")\n" +
+                                        "")
+*/
     , @NamedQuery(name = "User.findByIdNimbleUser", query = "SELECT u FROM User u WHERE u.idNimbleUser = :idNimbleUser")
     , @NamedQuery(name = "User.findByBrand", query = "SELECT u FROM User u WHERE u.brand = :brand")
     , @NamedQuery(name = "User.findByLoginPasswordProducer", query = "SELECT u FROM User u WHERE u.login = :login AND u.password = :password AND u.isProducer=1")
@@ -88,6 +102,17 @@ public class User implements Serializable {
     @Column(name = "producerNamespace")
     private String producerNamespace;
 
+    @Transient
+    private List<GroupConsumer> groupConsumer;
+
+    public List<GroupConsumer> getGroupConsumer() {
+        return groupConsumer;
+    }
+
+    public void setGroupConsumer(List<GroupConsumer> groupConsumer) {
+        this.groupConsumer = groupConsumer;
+    }
+    
     public User() {
     }
 

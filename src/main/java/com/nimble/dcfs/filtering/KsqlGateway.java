@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import javax.ws.rs.core.Application;
-import com.google.gson.Gson;
 import java.util.Properties;
 import java.util.List;
 import com.nimble.dcfs.util.PropertiesLoader;
@@ -39,9 +38,12 @@ import com.nimble.dcfs.util.PropertiesLoader;
 public class KsqlGateway extends Application {
     public static String OFFSET_EARLIEST = "earliest";
     public static String OFFSET_LATEST = "latest";
+    public int MAXROWRESULTSET = 1000;
+    public long TIMEOUTQUERY = 10000;
+    
 
     private final static Logger logger = Logger.getLogger(KsqlGateway.class);
-    Properties props = PropertiesLoader.loadProperties();
+    Properties props = PropertiesLoader.loadDcfsConsumerProperties();
     String ksqlClientid;
     
     public KsqlGateway() {
@@ -54,12 +56,11 @@ public class KsqlGateway extends Application {
     }
     
     public String getJsonResponse(boolean isQuery, String ksqlQuery) throws Exception {
-        String offset = props.getProperty("ksql.streams.auto.offset.reset");
+        String offset = props.getProperty("auto.offset.reset");
         return getJsonResponse(isQuery, ksqlQuery, offset);
     }
     
     public String getJsonResponse(boolean isQuery, String ksqlQuery, String offset) throws Exception {
-        
         String ksqlUrl = props.getProperty("ksqlUrl");
         if (isQuery) {
             ksqlUrl = ksqlUrl+"/query";
@@ -67,9 +68,16 @@ public class KsqlGateway extends Application {
             ksqlUrl = ksqlUrl+"/ksql";
         }
         
+        
+        
         ksqlQuery = formatQueryForRest(ksqlQuery);
         
-        String requestBody = "{\"ksql\": \""+ksqlQuery+"\",  \"streamsProperties\": {\"ksql.streams.auto.offset.reset\": \""+offset+"\"}}";
+        String requestBody = "{\"ksql\": \""+ksqlQuery+"\",  \"streamsProperties\": {";
+                  if (isQuery) {
+                        requestBody+= "\"ksql.streams.auto.offset.reset\": \""+offset+"\"";
+                  }
+        requestBody+= "}}";
+        
         
         //GROUP_ID_CONFIG = "NimbleDcfsConsumer+" + System.currentTimeMillis()
         
@@ -81,25 +89,54 @@ public class KsqlGateway extends Application {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
 
-        OutputStream outputStream = connection.getOutputStream(); // <-- I get an exception.
+        OutputStream outputStream = connection.getOutputStream();
 
         outputStream.write(requestBody.getBytes());
+        System.out.println("request "+requestBody );
         outputStream.flush();
+        outputStream.close();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));
         String inputLine;
         List<String> resultList = new ArrayList<String>();
-
-        while ( (inputLine = in.readLine()) != null && !inputLine.isEmpty()  ) {
-            resultList.add(inputLine.trim());
+        int nrRows = 0;
+        boolean atleastonerow=false;
+        long init = System.currentTimeMillis();
+        while ( true ) {
+            if ((inputLine = in.readLine()) != null && !inputLine.isEmpty() ) {
+                resultList.add(inputLine.trim());
+                if (atleastonerow) nrRows++;
+                atleastonerow = true;
+            } else {
+                if (atleastonerow) break;
+            }
+            if (MAXROWRESULTSET < nrRows) {
+                System.out.println("Query max row managed "+MAXROWRESULTSET);
+                break;
+            }
+            if ((System.currentTimeMillis()-init) > TIMEOUTQUERY) {
+                System.out.println("Query timeout "+TIMEOUTQUERY);
+                break;
+            }
         }
+        
 
         in.close();
         connection.disconnect();
+        connection = null;
         
-        String json = new Gson().toJson( resultList );     
-        return json;
+        StringBuffer json = new StringBuffer();
+        json.append("{\"nimble_dcfs_result\" : [");
+        for (int i = 0; i<resultList.size(); i++ ) {
+            json.append(""+resultList.get(i));
+            if (i<resultList.size()-1) {
+                json.append(",");
+            }
+        }
+        json.append("] }");
+        
+        return json.toString();
 
     }
 

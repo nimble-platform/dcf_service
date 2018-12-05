@@ -1,0 +1,24 @@
+{
+    "/": {
+        "fstype": "btrfs",
+        "options": [ "ssd" ]
+    },
+    "/tmp": {
+        "device": "tmpfs",
+        "fstype": "tmpfs",
+        "options": [ "size=64M" ]
+    },
+    "/var/lib/mysql": {
+        "device": "/dev/data/mysql",
+        "fstype": "btrfs"
+    },
+    "results" : [
+            {"row": {"columns":[1537343182244,"1537343182242","http://url.ext/id\u003d198",277200,396000,"REF_1537343182242","-12755","WEB"]},
+            "errorMessage":null},
+            {"row": {"columns":[1537343182244,"1537343182242","http://url.ext/id\u003d198",277200,396000,"REF_1537343182242","-12755","WEB"]},
+            "errorMessage":null}
+            ]
+        
+            
+    
+}
