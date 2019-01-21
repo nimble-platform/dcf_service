@@ -47,6 +47,21 @@ public class PropertiesLoader {
             Properties prop = new Properties();
             prop.load(inputStream);
 
+            
+            boolean useSsl = Boolean.parseBoolean(prop.getProperty("dcfs.kafkaUseSSL"));
+            if (useSsl) {
+                String sasl_jaas_config = prop.getProperty("sasl.jaas.config");
+                String dcfs_ssl_login=System.getenv("dcfs_kafka_ssl_login");
+                String dcfs_ssl_password=System.getenv("dcfs_kafka_ssl_password");
+                
+                sasl_jaas_config = sasl_jaas_config.replaceAll("\\$dcfs_kafka_ssl_login", dcfs_ssl_login);
+                sasl_jaas_config = sasl_jaas_config.replaceAll("\\$dcfs_kafka_ssl_password", dcfs_ssl_password);
+                prop.setProperty("sasl.jaas.config", sasl_jaas_config);
+                System.out.println("overwriting in "+file+" sasl.jaas.config="+sasl_jaas_config);
+            }
+
+            
+            
             return prop;
         } catch (Exception ex) {
             logger.info(String.format("Exception '%s' on loading properties file '%s'", ex.getMessage(), file));

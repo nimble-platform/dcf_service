@@ -8,24 +8,26 @@
  Exception while trying to clean up internal topics for application id:  _confluent-ksql-nimbletransient_373448461372891277_1528878625364.
  
 - bluemix and ksql
-https://github.com/confluentinc/ksql/issues/1326 on 22 May 
+JANUARY 2019 ibm has updated to kafka 1.1 which is compliant with ksql.
+
+[DEPRECATED] https://github.com/confluentinc/ksql/issues/1326 on 22 May 
 question "IBM MessageHub is currently based on Kafka 0.10.2 whereas KSQL 4.1 is compatible with Kafka 0.11.x. Hence I am trying with KSQL 0.4.x branch." 
 reply "This was actually a bug in the documentation IIRC. All prior KSQL versions including 0.4 only worked with Kafka 0.11 and later. They never worked with 0.10.2."
 
-- kafka 0.5 - /kafka/ksql/bin$ ./ksql-server-start ../config/ksqlserver.properties
+[DEPRECATED]- kafka 0.5 - /kafka/ksql/bin$ ./ksql-server-start ../config/ksqlserver.properties
 Exception in thread "main" io.confluent.ksql.util.KsqlException: Could not fetch broker information. KSQL cannot initialize AdminCLient.
         at io.confluent.ksql.util.KafkaTopicClientImpl.init(KafkaTopicClientImpl.java:188)
         at io.confluent.ksql.util.KafkaTopicClientImpl.<init>(KafkaTopicClientImpl.java:52)
         at io.confluent.ksql.rest.server.KsqlRestApplication.buildApplication(KsqlRestApplication.java:232)
         at io.confluent.ksql.rest.server.KsqlRestApplication.main(KsqlRestApplication.java:207)
 
-- kafka 4.1 - ERROR Failed to initialize TopicClient: org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support DESCRIBE_CONFIGS (io.confluent.ksql.util.KafkaTopicClient:257)
+[DEPRECATED] - kafka 4.1 - ERROR Failed to initialize TopicClient: org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support DESCRIBE_CONFIGS (io.confluent.ksql.util.KafkaTopicClient:257)
 Exception in thread "main" io.confluent.ksql.util.KsqlException: Could not fetch broker information. KSQL cannot initialize AdminClient.
 
-Ibm docs
+[DEPRECATED] Ibm docs
 https://console.bluemix.net/docs/services/EventStreams/eventstreams110.html#ksql_using
 
-workaround: introduced in the service the use of apache kafkamirror
+[DEPRECATED] workaround: introduced in the service the use of apache kafkamirror
 
 - only in local development
 

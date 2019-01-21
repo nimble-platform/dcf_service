@@ -43,12 +43,14 @@ public class KsqlGateway extends Application {
     
 
     private final static Logger logger = Logger.getLogger(KsqlGateway.class);
-    Properties props = PropertiesLoader.loadDcfsConsumerProperties();
+    Properties props = PropertiesLoader.loadConsumerProperties();
     String ksqlClientid;
     
     public KsqlGateway() {
         ksqlClientid = props.getProperty("client.id")+"."+System.currentTimeMillis();
         props.replace("client.id", ksqlClientid);
+        MAXROWRESULTSET = Integer.parseInt(props.getProperty("dcfs.maxrowresultset"));
+        TIMEOUTQUERY = Long.parseLong(props.getProperty("dcfs.timeoutquery"));
     }
     
     public String getJsonResponse(String ksqlQuery) throws Exception {

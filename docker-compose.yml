@@ -10,62 +10,26 @@ services:
       volumes:
         - ./db:/docker-entrypoint-initdb.d
 
-    dcfszookeeper:
-        container_name: dcfszookeeper
-        image: confluentinc/cp-zookeeper:4.1.0
-        environment:
-            ZOOKEEPER_CLIENT_PORT: "2181"
-
-    dcfskafka:
-        container_name: dcfskafka
-        image: confluentinc/cp-kafka:4.1.0
-        environment:
-            KAFKA_ZOOKEEPER_CONNECT: "dcfszookeeper:2181"
-            KAFKA_ADVERTISED_LISTENERS: "LISTENER_DOCKER://dcfskafka:9092"
-            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_DOCKER:PLAINTEXT"
-            KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_DOCKER"
-            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
-        depends_on:
-          - dcfszookeeper
-
     dcfsksql:
         container_name: dcfsksql
         image: confluentinc/cp-ksql-server:4.1.2
+        volumes:
+          - ./ksql:/etc/ksql/
+        command: bash -c "sed \"s/dcfs_kafka_ssl_password/${dcfs_kafka_ssl_password}/g\" /etc/ksql/ksql-server.properties.template > /etc/ksql/ksql-server.properties && /usr/bin/ksql-server-start /etc/ksql/ksql-server.properties"
         environment:
-            KAFKA_ZOOKEEPER_CONNECT: "dcfszookeeper:2181"
-            KSQL_BOOTSTRAP_SERVERS: "dcfskafka:9092"
-            KSQL_LISTENERS: "http://0.0.0.0:8088"
-            KSQL_OPTS: "-Dcom.sun.management.jmxremote.rmi.port=31419"
-            KSQL_CONFIG_DIR: "/etc/ksql"
-        depends_on:
-          - dcfszookeeper
-          - dcfskafka
-        
+            dcfs_kafka_ssl_password: $dcfs_kafka_ssl_password
+
     dcfstomcat:
         container_name: dcfstomcat
         image: tomcat
+        environment:
+            dcfs_kafka_ssl_login: $dcfs_kafka_ssl_login
+            dcfs_kafka_ssl_password: $dcfs_kafka_ssl_password
         ports:
             - "28080:8080"
         volumes:
             - ./target:/usr/local/tomcat/webapps
         depends_on:
           - dcfsmysqldb
-          - dcfszookeeper
-          - dcfskafka
           - dcfsksql
           
-    dcfskafkamirror:
-        container_name: dcfskafkamirror
-        image: confluentinc/cp-kafka:4.1.0
-        volumes:
-          - ./mirrorMaker:/etc/mirrorMaker/
-        command: bash -c "sed \"s/changeme';/${DCFS_IBM_KAFKA_API_KEY}';/g\" /etc/mirrorMaker/mirror_consumerIBM.template > /etc/mirrorMaker/mirror_consumerIBM.properties && kafka-mirror-maker --consumer.config /etc/mirrorMaker/mirror_consumerIBM.properties --producer.config /etc/mirrorMaker/mirror_producer_dcfs.properties --num.streams 1 --whitelist '$DCFS_TOPIC_TO_MIRROR'"
-        environment:
-            DCFS_IBM_KAFKA_API_KEY: $DCFS_IBM_KAFKA_API_KEY
-            DCFS_TOPIC_TO_MIRROR: $DCFS_TOPIC_TO_MIRROR
-        depends_on:
-          - dcfsmysqldb
-          - dcfszookeeper
-          - dcfskafka
-          - dcfsksql
-          - dcfstomcat

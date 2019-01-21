@@ -28,7 +28,7 @@ public class PropertiesLoader {
     final private static Logger logger = Logger.getLogger(PropertiesLoader.class);
     final private static String propCfgFile = "Dcfs";
 
-    public static Properties loadDcfsConsumerProperties() { 
+    public static Properties loadConsumerProperties() { 
         Properties consumerProps = new Properties();
     
                 String consumerPropertiesfile = loadProperties().getProperty("dcfs.topic.consumer.propertiesfile");

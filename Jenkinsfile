@@ -1,15 +1,28 @@
-node ('nimble-jenkins-slave') {
-    stage('Download Latest') {
-        git(url: 'https://github.com/nimble-platform/dcf-service.git', branch: env.BRANCH_NAME)
-    }
+#!/usr/bin/env groovy
 
-    stage('Build Java') {
-        sh 'mvn clean install -DskipTests'
-    }
+node('nimble-jenkins-slave') {
 
+    // -----------------------------------------------
+    // --------------- Staging Branch ----------------
+    // -----------------------------------------------
     if (env.BRANCH_NAME == 'staging') {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/dcf-service.git', branch: env.BRANCH_NAME)
+            sh 'git submodule init'
+            sh 'git submodule update'
+        }
+
+        stage('Run Tests') {
+            sh 'mvn clean test'
+        }
+
+        stage('Build Java') {
+            sh 'mvn clean install -DskipTests'
+        }
+
         stage('Build Docker') {
-            sh 'docker build -t nimbleplatform/dcf-service:staging .'
+            sh 'mvn -f dcf-service/pom.xml docker:build -DdockerImageTag=staging'
         }
 
         stage('Push Docker') {
@@ -17,21 +30,70 @@ node ('nimble-jenkins-slave') {
         }
 
         stage('Deploy') {
-            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single identity-service"' // ToDo: implement???
+            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single dcf-service"'
         }
     }
 
+    // -----------------------------------------------
+    // ---------------- Master Branch ----------------
+    // -----------------------------------------------
     if (env.BRANCH_NAME == 'master') {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/dcf-service.git', branch: env.BRANCH_NAME)
+            sh 'git submodule init'
+            sh 'git submodule update'
+        }
+
+        stage('Run Tests') {
+            sh 'mvn clean test'
+        }
+
+        stage('Build Java') {
+            sh 'mvn clean install -DskipTests'
+        }
+    }
+
+    // -----------------------------------------------
+    // ---------------- Release Tags -----------------
+    // -----------------------------------------------
+    if( env.TAG_NAME ==~ /^\d+.\d+.\d+$/) {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/dcf-service.git', branch: 'master')
+            sh 'git submodule init'
+            sh 'git submodule update'
+        }
+
+        stage('Set version') {
+            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=' + env.TAG_NAME
+            sh 'mvn -f dcf-service/pom.xml org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=' + env.TAG_NAME
+        }
+
+        stage('Run Tests') {
+            sh 'mvn clean test'
+        }
+
+        stage('Build Java') {
+            sh 'mvn clean install -DskipTests'
+        }
+
         stage('Build Docker') {
-            sh 'docker build -t nimbleplatform/dcf-service:latest .'
+            sh 'mvn -f dcf-service/pom.xml docker:build'
         }
 
         stage('Push Docker') {
+            sh 'docker push nimbleplatform/dcf-service:' + env.TAG_NAME
             sh 'docker push nimbleplatform/dcf-service:latest'
         }
 
-        stage('Deploy') {
+        stage('Deploy MVP') {
             sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single dcf-service"'
+        }
+
+        stage('Deploy FMP') {
+            sh 'ssh fmp-prod "cd /srv/nimble-fmp/ && ./run-fmp-prod.sh restart-single dcf-service"'
         }
     }
 }
+

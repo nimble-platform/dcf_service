@@ -1,4 +1,9 @@
-05.12 rel 0.5
+18.01.2019 rel 0.6
+Now DCFS runs also with Kafka 1.1 provided by Ibm in Nimble since January 2019 which is compliant with KSQL
+Not necessary the use of Kafka Mirror; installation docker's file remain in order to help consumer which wants to have a clone of some Topics in a local instance of Kafka in order to cache all messages
+SSL login e password (apikey) read in environment variables.
+
+05.12.2018 rel 0.5
 
 System based over docker ready to be integrated in Nimble platform
 Service is now use case indipendent and customizable throught sql file and enviroment variables
@@ -8,7 +13,7 @@ detached producer's services in another internal project
 
 json topics enabled: filtering only possible over flatterned version.
 
-28.6 rel 0.4
+28.6.2018 rel 0.4
 
 Producer is able now to configure a subscription of an user without group directly to a datachannel
 

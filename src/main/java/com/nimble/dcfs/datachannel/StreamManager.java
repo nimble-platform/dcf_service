@@ -194,7 +194,10 @@ public class StreamManager {
                     ex.printStackTrace();
                 }
                 ksqlGateway.close();
-
+                        try {
+                            System.out.println("wait for slow kafka");
+                            Thread.sleep(2000);
+                        } catch (Exception ex) {}
             }
 
     }
