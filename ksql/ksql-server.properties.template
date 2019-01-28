@@ -10,7 +10,7 @@ security.protocol=SASL_SSL
 ssl.protocol=TLSv1.2
 ssl.enabled.protocols=TLSv1.2
 sasl.mechanism=PLAIN
-sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="token" password="dcfs_kafka_ssl_password";
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="token" password="ibm_kafka_apikey";
 ssl.endpoint.identification.algorithm=HTTPS
 key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
 value.deserializer=org.apache.kafka.common.serialization.StringDeserializer

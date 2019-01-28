@@ -15,16 +15,15 @@ services:
         image: confluentinc/cp-ksql-server:4.1.2
         volumes:
           - ./ksql:/etc/ksql/
-        command: bash -c "sed \"s/dcfs_kafka_ssl_password/${dcfs_kafka_ssl_password}/g\" /etc/ksql/ksql-server.properties.template > /etc/ksql/ksql-server.properties && /usr/bin/ksql-server-start /etc/ksql/ksql-server.properties"
+        command: bash -c "/etc/ksql/setApiKey.sh && /usr/bin/ksql-server-start /etc/ksql/ksql-server.properties"
         environment:
-            dcfs_kafka_ssl_password: $dcfs_kafka_ssl_password
+            MESSAGE_HUB_CREDENTIALS: $MESSAGE_HUB_CREDENTIALS
 
     dcfstomcat:
         container_name: dcfstomcat
         image: tomcat
         environment:
-            dcfs_kafka_ssl_login: $dcfs_kafka_ssl_login
-            dcfs_kafka_ssl_password: $dcfs_kafka_ssl_password
+            MESSAGE_HUB_CREDENTIALS: $MESSAGE_HUB_CREDENTIALS
         ports:
             - "28080:8080"
         volumes:

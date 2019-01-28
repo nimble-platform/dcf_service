@@ -17,6 +17,9 @@ Channel, users, group and filter have to be configured in initial sql in interna
 clone the project in https://github.com/nimble-platform/dcf_service
 
 customize your .env file
+in order to connect to Ibm Bluemix Kafka service you need to configure
+MESSAGE_HUB_CREDENTIALS={   "instance_id": "changeme",   "mqlight_lookup_url": "changeme",   "api_key": "changeme",   "kafka_admin_url": "changeme",   "kafka_rest_url": "changeme",   "kafka_brokers_sasl": [     "changeme:9093",     "changeme:9093"],   "user": "changeme",   "password": "changeme" }
+
 if kafka works in SSL set environment variable
 dcfs_ssl_login=login
 dcfs_ssl_password=changeit (usually by using APIKEY)
@@ -51,8 +54,7 @@ http://localhost:28080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_S
 - "no grant" example
 http://localhost:28080/dcf-service/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
 
-- Debug installation
-In order to allow developer to debug end users usage there is a server integrated with Ibm Kafka which is reacheable at http://nimble.holonix.biz:28080/dcf-service/
+
 
 
  ---

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  app: dcfs
+  name: dcfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dcfs
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      labels:
+        app: dcfs
+    spec:
+      containers:
+      - image: nimbleplatform/dcf_service:IMAGE_TAG
+        imagePullPolicy: Always
+        name: dcfs
+        env:
+        - name: ENVIRONMENT
+          value: "prod"
+        - name: MESSAGE_HUB_CREDENTIALS
+          valueFrom:
+            secretKeyRef:
+              name: messagehub-credentials
+              key: credentials.json
+        ports:
+        - containerPort: 28080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
