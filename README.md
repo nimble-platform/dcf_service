@@ -1,6 +1,6 @@
 # dcf_service
 
-> ** DataChannel Filtering Service rel 0.5 - 5.12.2018 **
+> ** DataChannel Filtering Service **
 
 
 
