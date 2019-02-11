@@ -23,8 +23,9 @@ import org.apache.log4j.Logger;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.json.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 
 public class PropertiesLoader {
     final private static Logger logger = Logger.getLogger(PropertiesLoader.class);
@@ -60,8 +61,8 @@ public class PropertiesLoader {
             
             return prop;
         } catch (Exception ex) {
-            logger.info(String.format("Exception '%s' on loading properties file '%s'", ex.getMessage(), file));
-            throw new RuntimeException("Unable to load properties");
+            logger.error(String.format("Exception '%s' on loading properties file '%s'", ex.getMessage(), file));
+            throw new RuntimeException("Unable to load properties"+ ex.getMessage());
         } finally {
             if (inputStream != null) {
                 try {
@@ -71,47 +72,49 @@ public class PropertiesLoader {
             }
         }
     }
+
+   
     
     private static Properties envVarFill(Properties prop){
+        
             boolean useSsl = Boolean.parseBoolean(prop.getProperty("dcfs.kafkaUseSSL"));
             if (useSsl) {
                 String jsonEnvVariableName = prop.getProperty("dcfs.jsonEnvVariableName");
+                     System.out.println("jsonEnvVariableName " +  jsonEnvVariableName);
                 if (jsonEnvVariableName != null && !"".equalsIgnoreCase(jsonEnvVariableName)) {
                     String json=System.getenv(jsonEnvVariableName);
-                    JsonObject jsonObject = (new Gson()).fromJson( json, JsonObject.class);
-                    String kafka_admin_url=jsonObject.getString("kafka_admin_url");
+                    System.out.println("json " +  json);
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = (JsonObject) gson.fromJson( json, JsonObject.class);
+                    String kafka_admin_url=jsonObject.get("kafka_admin_url").getAsString();
                     prop.setProperty("kafka_admin_url", kafka_admin_url);
                     
-                    String kafka_brokers_sasl=jsonObject.getString("kafka_brokers_sasl");
-                    JsonArray arrBrokers=jsonObject.getJsonArray("kafka_brokers_sasl");
+                    JsonArray arrBrokers=jsonObject.get("kafka_brokers_sasl").getAsJsonArray();
                     String sbrokers = "";
 
-                    for(int i=0;i<arrBrokers.size();i++) sbrokers += arrBrokers.getString(i)+",";
-                    prop.setProperty("kafka_brokers_sasl", sbrokers);
+                    for(int i=0;i<arrBrokers.size();i++) sbrokers += arrBrokers.get(i).getAsString()+",";
+                    prop.setProperty("bootstrap.servers", sbrokers);
 
                     
-                    String user=jsonObject.getString("user");
-                    String password=jsonObject.getString("password");
+                    String user=jsonObject.get("user").getAsString();
+                    String password=jsonObject.get("password").getAsString();
 
-                    String sasl_jaas_config = prop.getProperty("sasl_jaas_config");
+                    String sasl_jaas_config = prop.getProperty("sasl.jaas.config");
                     sasl_jaas_config = sasl_jaas_config.replaceAll("\\$user", user);
                     sasl_jaas_config = sasl_jaas_config.replaceAll("\\$password", password);
                     prop.setProperty("sasl.jaas.config", sasl_jaas_config);                    
-                    
-                    
-                
                 
                 } else {
                     String kafka_admin_url=System.getenv("kafka_admin_url");
-                    prop.setProperty("adminRestURL", kafka_admin_url);
+                    prop.setProperty("kafka_admin_url", kafka_admin_url);
                     
-                    String kafka_brokers_sasl=System.getenv("kafka_brokers_sasl");
+                    String kafka_brokers_sasl=System.getenv("bootstrap.servers");
                     prop.setProperty("bootstrap.servers", kafka_brokers_sasl);
 
                     String user=System.getenv("user");
                     String password=System.getenv("password");
 
-                    String sasl_jaas_config = prop.getProperty("sasl_jaas_config");
+                    String sasl_jaas_config = prop.getProperty("sasl.jaas.config");
                     sasl_jaas_config = sasl_jaas_config.replaceAll("\\$user", user);
                     sasl_jaas_config = sasl_jaas_config.replaceAll("\\$password", password);
                     prop.setProperty("sasl.jaas.config", sasl_jaas_config);

@@ -36,8 +36,6 @@ import com.nimble.dcfs.util.PropertiesLoader;
  */
 
 public class KsqlGateway extends Application {
-    public static String OFFSET_EARLIEST = "earliest";
-    public static String OFFSET_LATEST = "latest";
     public int MAXROWRESULTSET = 1000;
     public long TIMEOUTQUERY = 10000;
     
@@ -58,7 +56,7 @@ public class KsqlGateway extends Application {
     }
     
     public String getJsonResponse(boolean isQuery, String ksqlQuery) throws Exception {
-        String offset = props.getProperty("auto.offset.reset");
+        String offset = props.getProperty("ksql.streams.auto.offset.reset");
         return getJsonResponse(isQuery, ksqlQuery, offset);
     }
     

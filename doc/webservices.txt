@@ -4,41 +4,41 @@ Interrogazione WS
 Admin
 -----
 #restart dcf-service (recreate topics, recreate streams, run customInizializer) - usefull if anything has changed in db
-http://localhost:28080/dcfs/admin/restartSystem/nimble/nimble
+http://localhost:8080/dcf_service/admin/restartSystem/nimble/nimble
 
 
 CONSUMER BASIC
 --------------
 
 - check healt
-http://localhost:28080/dcfs/
+http://localhost:8080/dcf_service/
 
 - /loginConsumer/{login}/{password}
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
+http://localhost:8080/dcf_service/consumer/loginConsumer/CS/pwd
 
 - /listAvaiableDataChannel/{login}/{password}/{idProducer}
-http://localhost:28080/dcfs/consumer/listAvaiableDataChannel/CS/pwd/1
+http://localhost:8080/dcf_service/consumer/listAvaiableDataChannel/CS/pwd/1
 
-- restart dcfs (create stream, re-create topics)
-http://localhost:28080/dcfs/admin/restartSystem/nimble/nimble
+- restart dcf_service (create stream, re-create topics)
+http://localhost:8080/dcf_service/admin/restartSystem/nimble/nimble
 
 - login and streams name
-http://localhost:28080/dcfs/consumer/loginConsumer/CS/pwd
-http://localhost:28080/dcfs/consumer/listAvaiableDataChannel/CS/pwd/1
-http://localhost:28080/dcfs/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
+http://localhost:8080/dcf_service/consumer/loginConsumer/CS/pwd
+http://localhost:8080/dcf_service/consumer/listAvaiableDataChannel/CS/pwd/1
+http://localhost:8080/dcf_service/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
 
 - filter data
-http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
-http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA/serialnumber='371149701568'
-http://localhost:28080/dcfs/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_INTERVENTDATA/serialnumber='371149701568'
+http://localhost:8080/dcf_service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
+http://localhost:8080/dcf_service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA/serialnumber='371149701568'
+http://localhost:8080/dcf_service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_INTERVENTDATA/serialnumber='371149701568'
 
 - filtering data without "grants"
-http://localhost:28080/dcfs/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
+http://localhost:8080/dcf_service/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
 
 WEB SERVER DEMO HOLONIX
 ========================
 
 - check healt
-http://149.202.69.235:28080/dcf-service/
-http://nimble.holonix.biz:28080/dcf-service/
+http://149.202.69.235:8080/dcf-service/
+http://nimble.holonix.biz:8080/dcf-service/
 

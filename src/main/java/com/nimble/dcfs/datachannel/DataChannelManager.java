@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -30,24 +31,32 @@ public class DataChannelManager {
 
     
         public List<Channel>  getProducerChannel(Integer idProducer) {
-            List<Channel> channels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("Channel.findByIdProducer").setParameter("idProducer", idProducer).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<Channel> channels = em.createNamedQuery("Channel.findByIdProducer").setParameter("idProducer", idProducer).getResultList();
+            em.close();
             return channels;
         }
 
         public List<DataChannel>  getDataChannelList(Integer idChannel) {
-            List<DataChannel> dataChannels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("DataChannel.findByIdChannel").setParameter("idChannel", idChannel).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<DataChannel> dataChannels = em.createNamedQuery("DataChannel.findByIdChannel").setParameter("idChannel", idChannel).getResultList();
+            em.close();
             return dataChannels;
         }
 
         public DataChannel  getDataChannel(Integer idDataChannel) {
-            List<DataChannel> dataChannels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("DataChannel.findById").setParameter("id", idDataChannel).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<DataChannel> dataChannels = em.createNamedQuery("DataChannel.findById").setParameter("id", idDataChannel).getResultList();
+            em.close();
             if (dataChannels.size()>0)
             return dataChannels.get(0);
             else return null;
         }
 
         public DataChannel  getDataChannel(Integer idProducer, String dataChannelName) {
-            List<DataChannel> dataChannels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("DataChannel.findByIdProducerAndDataChannelName").setParameter("idProducer", idProducer).setParameter("dataChannelName", dataChannelName).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<DataChannel> dataChannels = em.createNamedQuery("DataChannel.findByIdProducerAndDataChannelName").setParameter("idProducer", idProducer).setParameter("dataChannelName", dataChannelName).getResultList();
+            em.close();
             if (dataChannels.size()>0)
             return dataChannels.get(0);
             else return null;
@@ -55,19 +64,25 @@ public class DataChannelManager {
 
 
         public Channel getChannel(Integer idChannel) {
-            List<Channel> channels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("Channel.findById").setParameter("id", idChannel).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<Channel> channels = em.createNamedQuery("Channel.findById").setParameter("id", idChannel).getResultList();
+            em.close();
             if (channels.size()>0)
             return channels.get(0);
             else return null;
         }
 
         public List<Channel>  getChannelList() {
-            List<Channel> channels = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("Channel.findAll").getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<Channel> channels = em.createNamedQuery("Channel.findAll").getResultList();
+            em.close();
             return channels;
         }
 
         public DataFormat  getDataFormat(Integer idDataFormat) {
-            List<DataFormat> dataFormats = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("DataFormat.findById").setParameter("id", idDataFormat).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<DataFormat> dataFormats = em.createNamedQuery("DataFormat.findById").setParameter("id", idDataFormat).getResultList();
+            em.close();
             if (dataFormats.size()>0)
             return dataFormats.get(0);
             else return null;

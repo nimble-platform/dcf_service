@@ -1,47 +1,6 @@
 - topic, channel, datachannel, column name cannot have char (.,-/ _#'^)
 
-- every datachannel is better to have always key in field list
-
-- drop and recreation of streams cause -> added dcfs.streams.recreate=false which create only new Streams
-
-- #[2018-06-13 10:15:09,349] ERROR Shutdown broker because all log dirs in /tmp/kafka-logs have failed (kafka.log.LogManager);
- Exception while trying to clean up internal topics for application id:  _confluent-ksql-nimbletransient_373448461372891277_1528878625364.
- 
-- bluemix and ksql
-JANUARY 2019 ibm has updated to kafka 1.1 which is compliant with ksql.
-
-[DEPRECATED] https://github.com/confluentinc/ksql/issues/1326 on 22 May 
-question "IBM MessageHub is currently based on Kafka 0.10.2 whereas KSQL 4.1 is compatible with Kafka 0.11.x. Hence I am trying with KSQL 0.4.x branch." 
-reply "This was actually a bug in the documentation IIRC. All prior KSQL versions including 0.4 only worked with Kafka 0.11 and later. They never worked with 0.10.2."
-
-[DEPRECATED]- kafka 0.5 - /kafka/ksql/bin$ ./ksql-server-start ../config/ksqlserver.properties
-Exception in thread "main" io.confluent.ksql.util.KsqlException: Could not fetch broker information. KSQL cannot initialize AdminCLient.
-        at io.confluent.ksql.util.KafkaTopicClientImpl.init(KafkaTopicClientImpl.java:188)
-        at io.confluent.ksql.util.KafkaTopicClientImpl.<init>(KafkaTopicClientImpl.java:52)
-        at io.confluent.ksql.rest.server.KsqlRestApplication.buildApplication(KsqlRestApplication.java:232)
-        at io.confluent.ksql.rest.server.KsqlRestApplication.main(KsqlRestApplication.java:207)
-
-[DEPRECATED] - kafka 4.1 - ERROR Failed to initialize TopicClient: org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support DESCRIBE_CONFIGS (io.confluent.ksql.util.KafkaTopicClient:257)
-Exception in thread "main" io.confluent.ksql.util.KsqlException: Could not fetch broker information. KSQL cannot initialize AdminClient.
-
-[DEPRECATED] Ibm docs
-https://console.bluemix.net/docs/services/EventStreams/eventstreams110.html#ksql_using
-
-[DEPRECATED] workaround: introduced in the service the use of apache kafkamirror
-
-- only in local development
-
-- GRAVE [localhost-startStop-2] org.apache.catalina.loader.WebappClassLoaderBase.checkThreadLocalMapForLeaks The web application [dcfs] created a ThreadLocal with key of type [scala.util.parsing.json.Parser$$anon$1] (value [scala.util.parsing.json.Parser$$anon$1@18fb6137]) and a value of type [kafka.utils.Json$$$Lambda$312/942873022] (value [kafka.utils.Json$$$Lambda$312/942873022@7f58e679]) but failed to remove it when the web application was stopped. Threads are going to be renewed over time to try and avoid a probable memory leak.
-  GRAVE [localhost-startStop-2] org.apache.catalina.loader.WebappClassLoaderBase.checkThreadLocalMapForLeaks The web application [dcfs] created a ThreadLocal with key of type [scala.util.DynamicVariable$$anon$1] (value [scala.util.DynamicVariable$$anon$1@42d7a0fe]) and a value of type [scala.Some] (value [Some([1.199] failure: end of input
-
-     {"listener_security_protocol_map":{"PLAINTEXT":"PLAINTEXT"},"endpoints":["PLAINTEXT://192.168.56.102:9092"],"jmx_port":-1,"host":"192.168.56.102","timestamp":"1535763429313","port":9092,"version":4}
-                                                                                                                                                                                                      ^)]) but failed to remove it when the web application was stopped. Threads are going to be renewed over time to try and avoid a probable memory leak.
-  GRAVE [localhost-startStop-2] org.apache.catalina.loader.WebappClassLoaderBase.checkThreadLocalMapForLeaks The web application [dcfs] created a ThreadLocal with key of type [scala.util.DynamicVariable$$anon$1] (value [scala.util.DynamicVariable$$anon$1@9271565]) and a value of type [scala.None$] (value [None]) but failed to remove it when the web application was stopped. Threads are going to be renewed over time to try and avoid a probable memory leak.
-
-    Resolved by using Kafka client 2.0.x
-
-- AVVERTENZA [localhost-startStop-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [dcfs] appears to have started a thread named [pool-3-thread-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- sun.misc.Unsafe.park(Native Method)
-
-MySQL Connector/J 8.0 is highly recommended for use with MySQL Server 8.0, 5.7, 5.6, and 5.5. Please upgrade to MySQL Connector/J 8.0.
+- importing git project to and vs microsoft add carriage return char (^M) which generate linux shell errors in running. launch
+sed -i -e 's/\r$//' *.*
+or dos2linux to remove this chars
 

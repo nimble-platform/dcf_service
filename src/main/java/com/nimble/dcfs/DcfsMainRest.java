@@ -59,7 +59,6 @@ public class DcfsMainRest extends Application implements ServletContextListener,
      * @throws Exception
      */
     public DcfsMainRest() throws Exception {
-        //DcfsEntityManagerFactory.createEntityManager();
         logger.info("DCFS in build main");
     }
 

@@ -67,10 +67,23 @@ public class TestUtilityClass {
     }
 
     public static void main (String argc[]) {
-        TestUtilityClass testObj = new TestUtilityClass();
+        //TestUtilityClass testObj = new TestUtilityClass();
         //testObj.testGetFieldFilterList(new Integer(1), new Integer(7), "IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA");
         //testObj.testGetMetadataChannelList(new Integer(1), new Integer(7), "IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA");
         //testObj.testLoginConsumer();
+        StringBuilder sb = new StringBuilder(); 
+        java.util.Map<String, String> env = System.getenv(); 
+        for (String key : env.keySet()) { 
+         sb.append(key + ": " + env.get(key)  + "\n"); 
+        } 
+
+        //System.out.println(sb.toString());
+        
+        System.out.println(System.getenv("MESSAGE_HUB_CREDENTIALS"));
+        
+        
+        
+        
     }
     
     

@@ -20,6 +20,7 @@ import com.nimble.dcfs.db.*;
 import com.nimble.dcfs.util.PropertiesLoader;
 import java.util.Properties;
 import java.util.List;
+import javax.persistence.EntityManager;
 
 /**
  * Manger which controls access to message Stream using Db persisted rules
@@ -49,7 +50,9 @@ public class AclManager {
      * @return
      */
     public User getProducer(String login, String password) {
-        List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findByLoginPasswordProducer").setParameter("login", login).setParameter("password", password).getResultList();
+        EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+        List<User> users = em.createNamedQuery("User.findByLoginPasswordProducer").setParameter("login", login).setParameter("password", password).getResultList();
+        em.close();
         if (users.size()>0)
         return users.get(0);
         else return null;
@@ -62,7 +65,9 @@ public class AclManager {
      * @return
      */
     public List<User> getProducerForConsumer(Integer idConsumer) {
-        List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findByIdConsumer").setParameter("idconsumer", idConsumer).getResultList();
+        EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+        List<User> users = em.createNamedQuery("User.findByIdConsumer").setParameter("idconsumer", idConsumer).getResultList();
+        em.close();
         return users;
     }
 
@@ -72,7 +77,9 @@ public class AclManager {
      * @return
      */
     public User getProducer(String producerNamespace) {
-        List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findByProducerNamespace").setParameter("producerNamespace", producerNamespace).getResultList();
+        EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+        List<User> users = em.createNamedQuery("User.findByProducerNamespace").setParameter("producerNamespace", producerNamespace).getResultList();
+        em.close();
         if (users.size()>0)
         return users.get(0);
         else return null;
@@ -83,7 +90,9 @@ public class AclManager {
      * @return
      */
     public List<User> getProducerList() {
-            List<User> producerList = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findAllProducer").getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+            List<User> producerList = em.createNamedQuery("User.findAllProducer").getResultList();
+            em.close();
             return producerList;
         }
 
@@ -93,7 +102,9 @@ public class AclManager {
      * @return
      */
     User getUser(Integer idUser) {
-        List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findById").setParameter("id", idUser).getResultList();
+            EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+        List<User> users = em.createNamedQuery("User.findById").setParameter("id", idUser).getResultList();
+            em.close();
         if (users.size()>0)
         return users.get(0);
         else return null;
@@ -106,13 +117,17 @@ public class AclManager {
      * @return
      */
     public User getConsumer(String login, String password) {
-        List<User> users = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("User.findByLoginPasswordConsumer").setParameter("login", login).setParameter("password", password).getResultList();
+        User user=null;
+        EntityManager em = DcfsEntityManagerFactory.createEntityManager();
+        List<User> users = em.createNamedQuery("User.findByLoginPasswordConsumer").setParameter("login", login).setParameter("password", password).getResultList();
         if (users.size()>0) {
-            User user = users.get(0);
-            List<GroupConsumer> groupConsumer = DcfsEntityManagerFactory.createEntityManager().createNamedQuery("GroupConsumer.findByIdUserInSubscription").setParameter("idConsumer", user.getId()).getResultList();
+            user = users.get(0);
+            List<GroupConsumer> groupConsumer = em.createNamedQuery("GroupConsumer.findByIdUserInSubscription").setParameter("idConsumer", user.getId()).getResultList();
             user.setGroupConsumer(groupConsumer);
-            return user;
-        } else return null;
+        } 
+        em.close();
+        return user;
+        
     }
 
 }

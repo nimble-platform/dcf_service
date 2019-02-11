@@ -1,3 +1,12 @@
+12.02.2019 rel 0.6.1
+Change configuration file to be ready to run in Ibm Kubernates Cluster the Dcf-service (in order to develop and control logs Ksql and Mysql stay in holonix server in first k8s integration step)
+disabled topics delete and create; enabled only stream re-create: this remove the need to read env-variables
+modified jenkisfile
+db connection open only when used
+
+producer connect to Kafka 1.1 without need of wait in each send message action
+
+
 18.01.2019 rel 0.6
 Now DCFS runs also with Kafka 1.1 provided by Ibm in Nimble since January 2019 which is compliant with KSQL
 Not necessary the use of Kafka Mirror; installation docker's file remain in order to help consumer which wants to have a clone of some Topics in a local instance of Kafka in order to cache all messages

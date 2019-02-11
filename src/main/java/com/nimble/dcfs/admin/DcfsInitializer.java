@@ -54,11 +54,14 @@ class DcfsInitializer {
      * - launch in a separate Thread every Custom Data Producer listed in system property file as dcfs.custom.CustomSystemInitializer[0..n]
      */
     void restartDcfs() {
+            boolean createTopics = Boolean.parseBoolean(systemProps.getProperty("dcfs.topics.create"));
             boolean recreateTopics = Boolean.parseBoolean(systemProps.getProperty("dcfs.topics.recreate"));
-            if (recreateTopics) {
-                String producerPropertiesfile = systemProps.getProperty("dcfs.topic.producer.propertiesfile");
-                System.out.println("producerPropertiesfile="+producerPropertiesfile);
-                if ( producerPropertiesfile!= null ) {
+            boolean recreateStreams = Boolean.parseBoolean(systemProps.getProperty("dcfs.streams.recreate"));
+
+            String producerPropertiesfile = systemProps.getProperty("dcfs.topic.producer.propertiesfile");
+            System.out.println("producerPropertiesfile="+producerPropertiesfile);
+            if ( producerPropertiesfile!= null || !"".equalsIgnoreCase(producerPropertiesfile.trim())) {
+                if (createTopics || recreateTopics) {
                     Properties producerProps = PropertiesLoader.loadProperties(producerPropertiesfile);
                     iTopicManager topicManagerProducer;
                     boolean useRestForTopic = Boolean.parseBoolean(producerProps.getProperty("dcfs.useRestForTopic"));
@@ -70,9 +73,11 @@ class DcfsInitializer {
                     topicManagerProducer.initTopicManager(producerProps);
                     this.enabledTopics =  topicManagerProducer.recreateDcfsTopics();
              }
-            
-                String consumerPropertiesfile = systemProps.getProperty("dcfs.topic.consumer.propertiesfile");
-                if ( consumerPropertiesfile!= null && !"".equalsIgnoreCase(consumerPropertiesfile) ) {
+            }
+             
+            String consumerPropertiesfile = systemProps.getProperty("dcfs.topic.consumer.propertiesfile");
+            if ( consumerPropertiesfile!= null && !"".equalsIgnoreCase(consumerPropertiesfile) ) {
+                if (createTopics || recreateTopics) {
                         Properties consumerProps = PropertiesLoader.loadProperties(consumerPropertiesfile);
                         iTopicManager topicManagerConsumer;
                         boolean useRestForTopic = Boolean.parseBoolean(consumerProps.getProperty("dcfs.useRestForTopic"));
@@ -82,19 +87,22 @@ class DcfsInitializer {
                                 topicManagerConsumer = (iTopicManager) new TopicManager();
                         }
                         topicManagerConsumer.initTopicManager(consumerProps);
-
-                        StreamManager streamManager = new StreamManager();
-                        boolean recreateStreams = Boolean.parseBoolean(systemProps.getProperty("dcfs.streams.recreate"));
-                        if (recreateStreams) {
-                            streamManager.executeDropStreamCommands();
-                        }
-                        enabledStreams = streamManager.executeCreateStreamCommands();
                 }
+                
+                StreamManager streamManager = new StreamManager();
+                        
+                if (recreateStreams) {
+                  streamManager.executeDropStreamCommands();
+                }
+                enabledStreams = streamManager.executeCreateStreamCommands();
+                
             }
+            
 
 
             System.out.println("DataChannel Filtering System initialized successfully");
             logger.debug("DataChannel Filtering System initialized successfully");
+            
         }
         
 }

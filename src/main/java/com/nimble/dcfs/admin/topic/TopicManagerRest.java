@@ -46,7 +46,7 @@ public class TopicManagerRest implements iTopicManager {
     public void createTopic(String topicName) {
         topicName = topicName.toUpperCase();
         try {
-            String restResponse = KafkaAdminRestClient.createTopic(propConfiguration.getProperty("adminRestURL"), propConfiguration.getProperty("apiKey"), topicName);
+            String restResponse = KafkaAdminRestClient.createTopic(propConfiguration.getProperty("kafka_admin_url"), propConfiguration.getProperty("apiKey"), topicName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

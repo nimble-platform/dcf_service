@@ -2,33 +2,12 @@ version: '3'
 
 services:
 
-    dcfsmysqldb:
-      container_name: dcfsmysqldb
-      image: mysql:5.6.42
-      environment:
-        MYSQL_ROOT_PASSWORD: "nimble"
-      volumes:
-        - ./db:/docker-entrypoint-initdb.d
-
-    dcfsksql:
-        container_name: dcfsksql
-        image: confluentinc/cp-ksql-server:4.1.2
-        volumes:
-          - ./ksql:/etc/ksql/
-        command: bash -c "/etc/ksql/setApiKey.sh && /usr/bin/ksql-server-start /etc/ksql/ksql-server.properties"
-        environment:
-            MESSAGE_HUB_CREDENTIALS: $MESSAGE_HUB_CREDENTIALS
-
-    dcfstomcat:
-        container_name: dcfstomcat
+    dcf_service:
+        container_name: dcf_service
         image: tomcat
-        environment:
-            MESSAGE_HUB_CREDENTIALS: $MESSAGE_HUB_CREDENTIALS
         ports:
-            - "28080:8080"
+            - "8080:8080"
         volumes:
             - ./target:/usr/local/tomcat/webapps
-        depends_on:
-          - dcfsmysqldb
-          - dcfsksql
-          
+        environment:
+            DCF_SERVICE_ENVIRONMENT: "prod"
