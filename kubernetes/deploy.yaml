@@ -2,13 +2,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-  app: dcf_service
-  name: dcf_service
+  app: dcf-service
+  name: dcf-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dcf_service
+      app: dcf-service
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        app: dcf_service
+        app: dcf-service
     spec:
       containers:
       - image: nimbleplatform/dcf_service:IMAGE_TAG
         imagePullPolicy: Always
-        name: dcf_service
+        name: dcf-service
         env:
         - name: ENVIRONMENT
           value: "prod"

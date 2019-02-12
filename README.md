@@ -1,4 +1,4 @@
-# dcf_service
+# dcf-service
 
 > ** DataChannel Filtering Service **
 
@@ -29,30 +29,30 @@ docker-compose down
 ### - after start
 
 - check healt
-http://localhost:8080/dcf_service/
+http://localhost:8080/dcf-service/
 
 - restart dcfs (create stream, re-create topics)
-http://localhost:8080/dcf_service/admin/restartSystem/nimble/nimble
+http://localhost:8080/dcf-service/admin/restartSystem/nimble/nimble
 
 - login and streams name
-http://localhost:8080/dcf_service/consumer/loginConsumer/CS/pwd
-http://localhost:8080/dcf_service/consumer/listAvaiableDataChannel/CS/pwd/1
-http://localhost:8080/dcf_service/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
+http://localhost:8080/dcf-service/consumer/loginConsumer/CS/pwd
+http://localhost:8080/dcf-service/consumer/listAvaiableDataChannel/CS/pwd/1
+http://localhost:8080/dcf-service/consumer/dataChannelMetadata/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA
 
 - produce data
 directly in ibm kafka by subproject https://github.com/nimble-platform/dcf_service/tree/master/dcf_service_producer
 
 - filter data (the dcf service offers filter only over data produced after his run; the oldest messages are ignored)
-http://localhost:8080/dcf_service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
-http://localhost:8080/dcf_service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA/serialnumber='371149701568'
-http://localhost:8080/dcf_service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_INTERVENTDATA/serialnumber='371149701568'
+http://localhost:8080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
+http://localhost:8080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTDATA/serialnumber='371149701568'
+http://localhost:8080/dcf-service/consumer/filterChannel/CS/pwd/1/IT_WHIRPOOL_STREAMS_DC_INTERVENTDATA/serialnumber='371149701568'
 
 - "no grant" example
-http://localhost:8080/dcf_service/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
+http://localhost:8080/dcf-service/consumer/filterChannel/FSTF/pwd/1/IT_WHIRPOOL_STREAMS_DC_PRODUCTIONDATA/serialnumber='151710001772'
 
 
 - for End Users developer
-An Holonix istance in http://149.202.69.235:8080/dcf_service/
+An Holonix istance in http://149.202.69.235:8080/dcf-service/
 
  ---
 The project leading to this application has received funding from the European Union Horizon 2020 research and innovation programme under grant agreement No 723810.

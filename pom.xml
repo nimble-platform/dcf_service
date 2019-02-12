@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nimble</groupId>
-    <artifactId>dcf_service</artifactId>
+    <artifactId>dcf-service</artifactId>
     <version>0.6.1</version>
     <packaging>war</packaging>
 
-    <name>dcf_service</name>
+    <name>dcf-service</name>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
