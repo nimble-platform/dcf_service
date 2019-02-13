@@ -22,7 +22,7 @@ node ('nimble-jenkins-slave') {
 
     stage ('Print-deploy logs') {
         sh 'sleep 60'
-        sh 'kubectl  -n prod logs deploy/dcf_service -c dcf_service'
+        sh 'kubectl  -n prod logs deploy/dcf-service -c dcf-service'
     }
 }
  
