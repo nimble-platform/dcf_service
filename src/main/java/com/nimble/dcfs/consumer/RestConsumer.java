@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -33,6 +34,8 @@ import com.nimble.dcfs.datachannel.AclManager;
 import com.nimble.dcfs.db.User;
 
 import com.nimble.dcfs.filtering.KsqlGateway;
+import com.nimble.dcfs.integration.IdentityService.IdentityServiceVerifier;
+import com.nimble.dcfs.integration.IdentityService.NimbleUser;
 
 /**
  * Base service in order to login consumer, to have list of datachannel avaiable and metadata, to filter data on a channel
@@ -186,7 +189,10 @@ public class RestConsumer extends Application {
                 if ( (filterConditions!=null && !"".equals(filterConditions) && !"null".equalsIgnoreCase(filterConditions)) || (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue) && !"*".equalsIgnoreCase(filtervalue) ) ) {
                     ksqlQuery +=" where ";
                     if (filterConditions!=null && !"".equals(filterConditions) && !"null".equalsIgnoreCase(filterConditions) ) {
-                        ksqlQuery += filterConditions+" AND ";
+                        ksqlQuery += filterConditions;
+                    } 
+                    if (filterConditions!=null && !"".equals(filterConditions) && !"null".equalsIgnoreCase(filterConditions)  && (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue)&& !"*".equalsIgnoreCase(filtervalue) ) ) {
+                        ksqlQuery += " AND ";
                     } 
                     if (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue)&& !"*".equalsIgnoreCase(filtervalue) ) {
                         ksqlQuery += " ( "+filtervalue+" )";
@@ -217,4 +223,63 @@ public class RestConsumer extends Application {
         }
     }
 
+    
+    
+     /**
+     *
+     * @HeaderParam("Authorization") String accessToken from Identity Service SSO
+     * @param datachannelName one of the avaiable data stream for this user
+     * @param filtervalue where condition; take a look to https://docs.confluent.io/current/ksql/docs/syntax-reference.html#select
+     * @return
+     */
+    @GET
+    @Path("/filterChannel/{datachannelName}/{filtervalue}")
+    @Produces(MediaType.APPLICATION_JSON)   
+    public final Response getFilteredMessageForDataChannel(
+            @HeaderParam("Authorization") String accessToken,
+            @PathParam("datachannelName") String datachannelName, 
+            @PathParam("filtervalue") String filtervalue
+    ) { 
+            logger.info("getFilterChannel with accessToken " + accessToken);
+            
+        try {
+            if (accessToken == null) {
+                return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Authorization token is null") );
+            }
+            IdentityServiceVerifier isv = new IdentityServiceVerifier();
+            NimbleUser user = isv.verifyNimbleUser(accessToken);
+            if (user == null || !user.isValidUser()) {
+                return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Authorization token is invalid") );
+            }
+
+            datachannelName = datachannelName.toUpperCase();
+                logger.info("Retrieving data for value - " + filtervalue);
+                
+                
+                String ksqlQuery ="select *";
+                
+                ksqlQuery += " from "+datachannelName;
+                if ( (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue) && !"*".equalsIgnoreCase(filtervalue) ) ) {
+                    ksqlQuery +=" where ";
+                        ksqlQuery += " ( "+filtervalue+" )";
+                }
+                
+                ksqlQuery +=" LIMIT "+ksqlGateway.MAXROWRESULTSET;
+                ksqlQuery +=";";
+
+                logger.info("ksqlQuery executing = "+ksqlQuery);
+
+                String jsonResponse = ksqlGateway.getJsonResponse(ksqlQuery);
+
+                return createResponse(Response.Status.OK, jsonResponse);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            logger.error("Failed to read channels for target - " + filtervalue, e);
+            return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Failed to get data for datachannel - " + datachannelName +" ("+e.getMessage()+")") );
+        }
+    }
+
+
+    
+    
 }

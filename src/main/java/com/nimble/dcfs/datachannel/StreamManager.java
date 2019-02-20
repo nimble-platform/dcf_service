@@ -161,7 +161,7 @@ public class StreamManager {
                         while (iC.hasNext()) {
                             Channel channel = iC.next();
                             DataFormat dataFormat = dataChannelManager.getDataFormat( channel.getIdDataFormat() );
-                            String mainCreate = "CREATE STREAM "+namespace+"STREAMS_"+channel.getTopicname().toUpperCase()+"( "+channel.getFieldTypeList()+")  WITH (KAFKA_TOPIC='"+namespace+channel.getTopicname().toUpperCase()+"', VALUE_FORMAT='"+dataFormat.getFormat().toUpperCase()+"'";
+                            String mainCreate = "CREATE STREAM "+namespace+"STREAMS_"+channel.getTopicname().toUpperCase()+"( "+channel.getFieldTypeList()+")  WITH (KAFKA_TOPIC='"+channel.getTopicname()+"', VALUE_FORMAT='"+dataFormat.getFormat().toUpperCase()+"'";
                             if (channel.getKey() != null && channel.getKey().length()>1) {
                                 mainCreate+=", KEY = '"+channel.getKey().toUpperCase()+"'";
                             }

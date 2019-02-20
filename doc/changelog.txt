@@ -1,3 +1,11 @@
+19.02.2019 rel 0.6.2
+This service is deployed in Ibm Nimble Cluster at 
+https://nimble.eu-de.containers.appdomain.cloud/dcf-service/
+
+First integration with Nimble Identity Service in order to filter without being configured in internal ACL; Authorization token is verified but not yet role of the user.
+
+Added example of how to integrate Message Service Nimble Project and to filter by DCFS_STREAMS_DC_MESSAGESERVICE
+
 12.02.2019 rel 0.6.1
 Change configuration file to be ready to run in Ibm Kubernates Cluster the Dcf-service (in order to develop and control logs Ksql and Mysql stay in holonix server in first k8s integration step)
 disabled topics delete and create; enabled only stream re-create: this remove the need to read env-variables

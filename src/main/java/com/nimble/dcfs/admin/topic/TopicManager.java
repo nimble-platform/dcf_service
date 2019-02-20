@@ -115,7 +115,7 @@ public class TopicManager implements iTopicManager {
                 Iterator<Channel> iC = channelList.iterator();
                 while (iC.hasNext()) {
                     Channel channel = iC.next();
-                    String topicName = namespace+channel.getTopicname().toUpperCase();
+                    String topicName = channel.getTopicname();
                    if (!existTopic(topicName)) {
                        recreateTopic(topicName);
                     }
