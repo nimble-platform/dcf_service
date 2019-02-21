@@ -15,7 +15,7 @@ ssl.endpoint.identification.algorithm=HTTPS
 key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
 value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
 application.id=dcfsWhirpoolClientlocale
-client.id=dcfsWhirpoolClientlocale
+client.id=dcfs
 group.id=dcfs_nimble_holonix
 
 
