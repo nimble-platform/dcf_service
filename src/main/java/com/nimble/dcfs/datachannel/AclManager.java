@@ -52,7 +52,7 @@ public class AclManager {
     public User getProducer(String login, String password) {
         EntityManager em = DcfsEntityManagerFactory.createEntityManager();
         List<User> users = em.createNamedQuery("User.findByLoginPasswordProducer").setParameter("login", login).setParameter("password", password).getResultList();
-        em.close();
+        //em.close();
         if (users.size()>0)
         return users.get(0);
         else return null;
@@ -67,7 +67,7 @@ public class AclManager {
     public List<User> getProducerForConsumer(Integer idConsumer) {
         EntityManager em = DcfsEntityManagerFactory.createEntityManager();
         List<User> users = em.createNamedQuery("User.findByIdConsumer").setParameter("idconsumer", idConsumer).getResultList();
-        em.close();
+        //em.close();
         return users;
     }
 
@@ -79,7 +79,7 @@ public class AclManager {
     public User getProducer(String producerNamespace) {
         EntityManager em = DcfsEntityManagerFactory.createEntityManager();
         List<User> users = em.createNamedQuery("User.findByProducerNamespace").setParameter("producerNamespace", producerNamespace).getResultList();
-        em.close();
+        //em.close();
         if (users.size()>0)
         return users.get(0);
         else return null;
@@ -92,7 +92,7 @@ public class AclManager {
     public List<User> getProducerList() {
             EntityManager em = DcfsEntityManagerFactory.createEntityManager();
             List<User> producerList = em.createNamedQuery("User.findAllProducer").getResultList();
-            em.close();
+            //em.close();
             return producerList;
         }
 
@@ -104,7 +104,7 @@ public class AclManager {
     User getUser(Integer idUser) {
             EntityManager em = DcfsEntityManagerFactory.createEntityManager();
         List<User> users = em.createNamedQuery("User.findById").setParameter("id", idUser).getResultList();
-            em.close();
+            //em.close();
         if (users.size()>0)
         return users.get(0);
         else return null;
@@ -125,7 +125,7 @@ public class AclManager {
             List<GroupConsumer> groupConsumer = em.createNamedQuery("GroupConsumer.findByIdUserInSubscription").setParameter("idConsumer", user.getId()).getResultList();
             user.setGroupConsumer(groupConsumer);
         } 
-        em.close();
+        //em.close();
         return user;
         
     }

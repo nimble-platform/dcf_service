@@ -24,11 +24,14 @@ import javax.persistence.Persistence;
  * @author a.musumeci
  */
 public class DcfsEntityManagerFactory {
+        static EntityManager em = null;
 
     public static EntityManager createEntityManager() {
+        if (em == null) {
                 EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.nimble.dcfs.PERSISTENCE");
-                EntityManager em = emf.createEntityManager();
-            return em;
+                em = emf.createEntityManager();
+        }
+        return em;
     }
     
 }

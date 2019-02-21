@@ -11,7 +11,7 @@
     <class>com.nimble.dcfs.db.DataChannel</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://nimble.holonix.biz:3306/datachannelfilteringservicedb?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&amp;connectTimeout=120000&amp;socketTimeout=120000&amp;"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://nimble.holonix.biz:3306/datachannelfilteringservicedb?autoReconnect=true&amp;zeroDateTimeBehavior=CONVERT_TO_NULL&amp;useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&amp;connectTimeout=120000&amp;socketTimeout=120000&amp;"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="nimble"/>
@@ -21,7 +21,14 @@
       <property name="cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
       <property name="show_sql" value="true"/>
       <property name="format_sql" value="true"/>
-
+      
+      <!-- Configuring Connection Pool -->
+      <property name="hibernate.c3p0.min_size" value="5" />
+      <property name="hibernate.c3p0.max_size" value="30" />
+      <property name="hibernate.c3p0.timeout" value="500" />
+      <property name="hibernate.c3p0.max_statements" value="50" />
+      <property name="hibernate.c3p0.idle_test_period" value="2000" />
+      
     </properties>
   </persistence-unit>
 </persistence>

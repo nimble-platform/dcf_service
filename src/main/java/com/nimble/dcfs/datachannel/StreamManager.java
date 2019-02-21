@@ -104,7 +104,7 @@ public class StreamManager {
                 }
             }
 
-            em.close();
+            //em.close();
             return avaiableStreams;
     }
         
@@ -252,7 +252,7 @@ public class StreamManager {
 
                  }
              }
-        em.close();
+        //em.close();
         return filterList;
     }
     
@@ -296,7 +296,7 @@ public class StreamManager {
             if (fieldList.length()==0) {
                 fieldList="*";
             }
-            em.close();
+            //em.close();
             return fieldList;
     }
     
