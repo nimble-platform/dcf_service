@@ -4,7 +4,7 @@
 
 <a name="getting-started"></a>
 ## Getting Started
-Access and filter Iot Data by using the easiness of Sql. Apply filter at runtime whitout having to manage hard to code low level Kafka Stream.
+Access and filter Iot Data by using the easiness of Sql. Apply filter at runtime without having to manage hard to code low level Kafka Stream.
 
 This service is integrated with SSO in Nimble (Identity Service) and allow data producers to add another level of access control over messages they are going to publish into Data-Channel by filtering data per row with WHERE conditions - similarly to Sql - and to choice list of  columns to show.
 
