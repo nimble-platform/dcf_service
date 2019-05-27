@@ -34,7 +34,7 @@ public class DcfsProducer implements AutoCloseable {
     Properties producerProps;
     ArrayList<String> avaiableTopics;
     KafkaProducer kProducer;
-    boolean verifyGrantForTopic = true;
+    boolean verifyGrantForTopic = false; //only for dev; this will be refactored for new datachannel
     long sleepProducerMsTime = 0;
     
     public DcfsProducer(Properties producerProps) {
@@ -55,7 +55,6 @@ public class DcfsProducer implements AutoCloseable {
     }
     
     private boolean canWriteIn(String topicName) {
-        
         return (avaiableTopics==null || avaiableTopics.contains(topicName));
     }
     

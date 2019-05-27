@@ -30,7 +30,7 @@ import java.util.Properties;
  * Example utility message Producer
  
  */
-class CsvProducer {
+public class CsvProducer {
 
     String topicName;
     String keyField;
@@ -43,7 +43,7 @@ class CsvProducer {
      * @param topic
      * @param keyField
      */
-    CsvProducer(DcfsProducer producer, Properties props, String topic, String keyField) {
+    public CsvProducer(DcfsProducer producer, Properties props, String topic, String keyField) {
         topicName = topic;
         this.keyField = keyField;
         this.producer = producer;
@@ -55,7 +55,7 @@ class CsvProducer {
      * @return
      * @throws Exception
      */
-    int workCsv( String fileName) throws Exception {
+    public int workCsv( String fileName) throws Exception {
         int lineCount = 0;
         
         try {

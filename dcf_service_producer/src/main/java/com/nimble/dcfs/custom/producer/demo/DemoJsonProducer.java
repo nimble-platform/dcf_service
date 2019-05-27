@@ -14,8 +14,9 @@
  * limitations under the License.
  */
  
-package com.nimble.dcfs.custom.producer;
+package com.nimble.dcfs.custom.producer.demo;
 
+import com.google.gson.Gson;
 import com.nimble.dcfs.producer.CustomProducer;
 import com.nimble.dcfs.util.PropertiesLoader;
 import com.nimble.dcfs.producer.DcfsProducer;
@@ -26,13 +27,13 @@ import java.util.Properties;
  *  Example message producer over file Csv; this can be extended in order to read from database, from twitter topics, to listen remote events and to write them and so on
  * @author a.musumeci
  */
-public class DemoProducer implements CustomProducer {
+public class DemoJsonProducer implements CustomProducer {
     Properties propsDemo = PropertiesLoader.loadProperties( "DemoNimbleDcfs" );
 
     /**
      *
      */
-    public DemoProducer() {
+    public DemoJsonProducer() {
         super();
     }
     
@@ -47,20 +48,33 @@ public class DemoProducer implements CustomProducer {
     public boolean afterStartTopic(Properties producerProps){
         DcfsProducer producer = new DcfsProducer( producerProps );
 
-        System.out.println("Start DemoNimbleDcfs SystemInitializer");
-        CsvProducer cvsProducer;
+        System.out.println("Start Demo JsonProducer");
         int iSent;
 
         int idxDc=0;
-        String channelName, channelKey, csvName;
-        String csvPath = (String) propsDemo.get("dataCsvPath");
-        while ( (channelName = (String) propsDemo.get("ChannelName"+idxDc)) != null) {
+        String channelName = (String) propsDemo.get("JsonChannelName");
+        String maxMessages = (String) propsDemo.get("JsonMaxMessages");
+        int iMaxMessages = Integer.parseInt(maxMessages);
+
+        while ( channelName!= null && idxDc < iMaxMessages ) {
             try {
-                channelKey = (String) propsDemo.get("ChannelKey"+idxDc);
-                csvName = (String) propsDemo.get("csvName"+idxDc);
-                cvsProducer = new CsvProducer(producer, propsDemo, channelName, channelKey );
-                iSent = cvsProducer.workCsv(csvPath+""+csvName);
-                System.out.println("Sent "+iSent+" messages of "+channelName);
+                
+                    DemoAdvData demoAdvData = new DemoAdvData();
+
+                    demoAdvData.setUrl("http://url.ext/id="+idxDc);
+                    demoAdvData.setRevenue(idxDc*2000);
+                    demoAdvData.setTotalPaid(idxDc*1400);
+                    String reference = "REF_"+System.currentTimeMillis();
+                    int code = (int) System.currentTimeMillis()/20000;
+                    String media = "WEB";
+                    
+                    demoAdvData.getNestedInfo().setReference(reference);
+                    demoAdvData.getNestedInfo().setCode(code);
+                    demoAdvData.getNestedInfo().setMedia(media);
+                    
+                    System.out.println("producing "+demoAdvData);
+                    producer.sendJsonMessage(channelName, System.currentTimeMillis()+"", new Gson().toJson(demoAdvData));
+                    Thread.sleep(2000*(long) Math.random());
             } catch (Exception ex) {
                 System.out.println("ERROR "+ex.getMessage()+"");
                 ex.printStackTrace();
@@ -68,7 +82,7 @@ public class DemoProducer implements CustomProducer {
             idxDc++;
         }
         producer.close();
-        System.out.println("End DemoProducer");
+        System.out.println("End DemoNimbleDcfsSystemInitializer");
         return true;
     }
     

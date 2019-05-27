@@ -14,8 +14,9 @@
  * limitations under the License.
  */
  
-package com.nimble.dcfs.custom.producer;
+package com.nimble.dcfs.custom.producer.whirpool;
 
+import com.nimble.dcfs.custom.producer.CsvProducer;
 import com.nimble.dcfs.producer.CustomProducer;
 import com.nimble.dcfs.util.PropertiesLoader;
 import com.nimble.dcfs.producer.DcfsProducer;

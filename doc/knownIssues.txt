@@ -4,3 +4,10 @@
 sed -i -e 's/\r$//' *.*
 or dos2linux to remove this chars
 
+- If for every reasons you have existing topic only as one partition you reach Exception
+"Topic XXXX does not conform to the requirements Partitions:1 v 4."
+https://rmoff.net/2018/03/06/ksql-topic-does-not-conform-to-the-requirements/
+
+Topic 'XXXX' does not conform to the requirements Partitions:1 v 4. Replication: 3 v 3\n\tat 
+
+On Ibm we have only 1 partition Topic.

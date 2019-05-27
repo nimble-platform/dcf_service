@@ -1,3 +1,7 @@
+27.05.2019 rel 0.6.3
+First versione in order to support for integration of Balance's client for LCC and Recycler
+
+
 19.02.2019 rel 0.6.2
 This service is deployed in Ibm Nimble Cluster at 
 https://nimble.eu-de.containers.appdomain.cloud/dcf-service/

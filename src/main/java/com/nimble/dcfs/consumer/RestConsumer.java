@@ -280,6 +280,62 @@ public class RestConsumer extends Application {
     }
 
 
+     /**
+     *
+     * @HeaderParam("Authorization") String accessToken from Identity Service SSO
+     * @param datachannelName one of the avaiable data stream for this user
+     * @param filtervalue where condition; take a look to https://docs.confluent.io/current/ksql/docs/syntax-reference.html#select
+     * @return
+     */
+    @GET
+    @Path("/subfilterChannel/{datachannelName}/{columnName}/{filtervalue}")
+    @Produces(MediaType.APPLICATION_JSON)   
+    public final Response getSubFilteredMessageForDataChannel(
+            @HeaderParam("Authorization") String accessToken,
+            @PathParam("datachannelName") String datachannelName, 
+            @PathParam("columnName") String columnName, 
+            @PathParam("filtervalue") String filtervalue
+    ) { 
+            logger.info("getFilterChannel with accessToken " + accessToken);
+            
+        try {
+            if (accessToken == null) {
+                return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Authorization token is null") );
+            }
+            IdentityServiceVerifier isv = new IdentityServiceVerifier();
+            NimbleUser user = isv.verifyNimbleUser(accessToken);
+            if (user == null || !user.isValidUser()) {
+                return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Authorization token is invalid") );
+            }
+
+            datachannelName = datachannelName.toUpperCase();
+                logger.info("Retrieving data for value - " + filtervalue);
+                
+                
+                String ksqlQuery ="select "+columnName+" ";
+                
+                ksqlQuery += " from "+datachannelName;
+                if ( (filtervalue!=null && !"".equals(filtervalue) && !"null".equalsIgnoreCase(filtervalue) && !"*".equalsIgnoreCase(filtervalue) ) ) {
+                    ksqlQuery +=" where ";
+                        ksqlQuery += " ( "+filtervalue+" )";
+                }
+                
+                ksqlQuery +=" LIMIT "+ksqlGateway.MAXROWRESULTSET;
+                ksqlQuery +=";";
+
+                logger.info("ksqlQuery executing = "+ksqlQuery);
+
+                String jsonResponse = ksqlGateway.getJsonResponse(ksqlQuery);
+
+                return createResponse(Response.Status.OK, jsonResponse);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            logger.error("Failed to read channels for target - " + filtervalue, e);
+            return createResponse(Response.Status.FORBIDDEN, new Gson().toJson("Failed to get data for datachannel - " + datachannelName +" ("+e.getMessage()+")") );
+        }
+    }
+
+
     
     
 }

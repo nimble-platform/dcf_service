@@ -129,7 +129,8 @@ public class KsqlGateway extends Application {
         StringBuffer json = new StringBuffer();
         json.append("{\"nimble_dcfs_result\" : [");
         for (int i = 0; i<resultList.size(); i++ ) {
-            json.append(""+resultList.get(i));
+            String jsonResult = resultList.get(i);
+            json.append(""+jsonResult);
             if (i<resultList.size()-1) {
                 json.append(",");
             }
